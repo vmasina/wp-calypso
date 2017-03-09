@@ -158,8 +158,8 @@ export const ImportingPane = React.createClass( {
 		}
 
 		return translate(
-			'Waiting on %(numResources)d resource to import',
-			'Waiting on %(numResources)d resources to import',
+			'Waiting on %(numResources)s resource to import',
+			'Waiting on %(numResources)s resources to import',
 			{
 				count: numResources,
 				args: { numResources: numberFormat( numResources ) }
