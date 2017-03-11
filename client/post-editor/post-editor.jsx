@@ -140,7 +140,7 @@ export const PostEditor = React.createClass( {
 	componentDidMount: function() {
 		// if content is passed in, e.g., through url param
 		if ( this.state.post && this.state.post.content ) {
-			this.refs.editor.setEditorContent( this.state.post.content, { initial: true } );
+			this.editor.setEditorContent( this.state.post.content, { initial: true } );
 		}
 	},
 
@@ -168,6 +168,10 @@ export const PostEditor = React.createClass( {
 			( nextProps.siteId === siteId && nextProps.postId !== postId ) ) {
 			this.useDefaultSidebarFocus( nextProps );
 		}
+	},
+
+	storeEditor( ref ) {
+		this.editor = ref;
 	},
 
 	useDefaultSidebarFocus( nextProps ) {
@@ -300,7 +304,7 @@ export const PostEditor = React.createClass( {
 							</div>
 							<hr className="editor__header-divider" />
 							<TinyMCE
-								ref="editor"
+								ref={ this.storeEditor }
 								mode={ mode }
 								tabIndex={ 2 }
 								isNew={ this.state.isNew }
@@ -398,16 +402,12 @@ export const PostEditor = React.createClass( {
 			this.setState( { loadingError } );
 		} else if ( ( PostEditStore.isNew() && ! this.state.isNew ) || PostEditStore.isLoading() ) {
 			// is new or loading
-			this.setState( this.getInitialState(), function() {
-				this.refs.editor.setEditorContent( '' );
-			} );
+			this.setState( this.getInitialState(), () => this.editor && this.editor.setEditorContent( '' ) );
 		} else if ( this.state.isNew && this.state.hasContent && ! this.state.isDirty ) {
 			// Is a copy of an existing post.
 			// When copying a post, the created draft is new and the editor is not yet dirty, but it already has content.
 			// Once the content is set, the editor becomes dirty and the following setState won't trigger anymore.
-			this.setState( this.getInitialState(), function() {
-				this.refs.editor.setEditorContent( this.state.post.content );
-			} );
+			this.setState( this.getInitialState(), () => this.editor && this.editor.setEditorContent( this.state.post.content ) );
 		} else {
 			postEditState = this.getPostEditState();
 			post = postEditState.post;
@@ -417,8 +417,8 @@ export const PostEditor = React.createClass( {
 				page.redirect( utils.getEditURL( post, site ) );
 			}
 			this.setState( postEditState, function() {
-				if ( didLoad || this.state.isLoadingAutosave ) {
-					this.refs.editor.setEditorContent( this.state.post.content, { initial: true } );
+				if ( this.editor && ( didLoad || this.state.isLoadingAutosave ) ) {
+					this.editor.setEditorContent( this.state.post.content, { initial: true } );
 				}
 
 				if ( this.state.isLoadingAutosave ) {
@@ -444,12 +444,12 @@ export const PostEditor = React.createClass( {
 	onEditorFocus: function() {
 		// Fire a click when the editor is focused so that any global handlers have an opportunity to do their thing.
 		// In particular, this ensures that open popovers are closed when a user clicks into the editor.
-		ReactDom.findDOMNode( this.refs.editor ).click();
+		ReactDom.findDOMNode( this.editor ).click();
 	},
 
 	saveRawContent: function() {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.editRawContent( this.refs.editor.getContent( { format: 'raw' } ) );
+		actions.editRawContent( this.editor.getContent( { format: 'raw' } ) );
 	},
 
 	autosave: function() {
@@ -463,7 +463,7 @@ export const PostEditor = React.createClass( {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		const edits = {
 			...this.props.edits,
-			content: this.refs.editor.getContent()
+			content: this.editor.getContent()
 		};
 		actions.edit( edits );
 
@@ -555,7 +555,7 @@ export const PostEditor = React.createClass( {
 			return;
 		}
 
-		edits.content = this.refs.editor.getContent();
+		edits.content = this.editor.getContent();
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.saveEdited( edits, function( error ) {
@@ -600,7 +600,7 @@ export const PostEditor = React.createClass( {
 
 		if ( status === 'publish' ) {
 			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-			actions.edit( { content: this.refs.editor.getContent() } );
+			actions.edit( { content: this.editor.getContent() } );
 			actions.autosave( previewPost );
 		} else {
 			this.onSave( null, previewPost );
@@ -658,7 +658,7 @@ export const PostEditor = React.createClass( {
 
 		// Update content on demand to avoid unnecessary lag and because it is expensive
 		// to serialize when TinyMCE is the active mode
-		edits.content = this.refs.editor.getContent();
+		edits.content = this.editor.getContent();
 
 		actions.saveEdited( edits, function( error ) {
 			if ( error && 'NO_CHANGE' !== error.message ) {
@@ -799,10 +799,10 @@ export const PostEditor = React.createClass( {
 	},
 
 	switchEditorMode: function( mode ) {
-		var content = this.refs.editor.getContent();
+		var content = this.editor.getContent();
 
 		if ( mode === 'html' ) {
-			this.refs.editor.setEditorContent( content );
+			this.editor.setEditorContent( content );
 		}
 
 		this.props.setEditorModePreference( mode );
