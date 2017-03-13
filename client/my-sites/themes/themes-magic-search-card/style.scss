@@ -10,10 +10,14 @@
 	}
 
 	.search {
+		font-family: monospace;
 		flex: 0 1 auto;
 		margin: 0;
 		&.has-focus {
 			box-shadow: none;
+		}
+		.search__input[type="search"] {
+			font-family: monospace;
 		}
 	}
 

@@ -54,6 +54,7 @@ class ThemesMagicSearchCard extends React.Component {
 	}
 
 	onKeyDown = ( event ) => {
+		this.setState( { cursorPosition: event.target.value.slice( 0, this.refs[ 'url-search' ].refs.searchInput.selectionStart ).length } );
 		this.findTextForSuggestions( event.target.value );
 		this.refs.suggestions.handleKeyEvent( event );
 	}
@@ -126,9 +127,19 @@ class ThemesMagicSearchCard extends React.Component {
 		return input.slice( 0, position ) + text + input.slice( position );
 	}
 
+
 	onSearchChange = ( input ) => {
-		this.findTextForSuggestions( input );
-		this.setState( { searchInput: input } );
+		let start = 0;
+		const m = input.match( /(^\s+)/ );
+		if ( m ) {
+			start = m[ 0 ].length;
+		}
+		const newText = this.state.searchInput.slice( 0, start ) +
+			input.trim() +
+			this.state.searchInput.slice( start );
+
+		this.findTextForSuggestions( newText );
+		this.setState( { searchInput: newText } );
 	}
 
 	onBlur = ( event ) => {
@@ -136,8 +147,8 @@ class ThemesMagicSearchCard extends React.Component {
 		this.setState( { searchIsOpen: false } );
 	}
 
-	searchTokens = ( input ) => {
-		const tokens = input.split( /(\s+)/ );
+	searchTokens = () => {
+		const tokens = this.state.searchInput.split( /(\s+)/ );
 
 		return (
 			tokens.map( ( token, i ) => {
@@ -178,6 +189,18 @@ class ThemesMagicSearchCard extends React.Component {
 		this.updateInput( updatedInput );
 	}
 
+	onSearch = ( text ) => {
+		this.props.onSearch( text );
+	}
+
+	emptyString = ( text ) => {
+		let empty = '';
+		for ( let i = 0; i < text.length; i++ ) {
+			empty += ' ';
+		}
+		return empty;
+	}
+
 	render() {
 		const isJetpack = this.props.site && this.props.site.jetpack;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
@@ -200,7 +223,7 @@ class ThemesMagicSearchCard extends React.Component {
 		const searchField = (
 			<Search
 				onSearch={ this.props.onSearch }
-				value={ this.state.searchInput }
+				value={ this.emptyString( this.state.searchInput ) }
 				ref="url-search"
 				placeholder={ translate( 'What kind of theme are you looking for?' ) }
 				analyticsGroup="Themes"
