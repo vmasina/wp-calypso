@@ -28,22 +28,16 @@ const FollowingIntro = ( props ) => {
 
 				<div className="following__intro-copy">
 
-					<p className="following__intro-description">
 						{ props.translate(
-							'Welcome! Reader is a custom magazine. {{link}}Follow your favorite sites{{/link}} and their latest posts will appear here.',
+							'{{strong}}Welcome!{{/strong}} Reader is a custom magazine. {{link}}Follow your favorite sites{{/link}} and their latest posts will appear here. Read, like, and comment in a distraction-free environment.',
 							{
 								components: {
-									link: <a href="/following/edit" />
+									link: <a href="/following/edit" />,
+									strong: <strong />
+
 								}
 							}
 						) }
-					</p>
-
-					<p className="following__intro-description additional">
-						{ props.translate(
-							'Read, like, and comment in a distraction-free environment.'
-						) }
-					</p>
 
 				</div>
 
