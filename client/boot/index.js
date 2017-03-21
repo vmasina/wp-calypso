@@ -358,8 +358,6 @@ function reduxStoreReady( reduxStore ) {
 		} );
 	}
 
-	require( 'my-sites' )();
-
 	// clear notices
 	page( '*', function( context, next ) {
 		context.store.dispatch( setRouteAction(
