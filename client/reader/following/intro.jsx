@@ -42,7 +42,9 @@ const FollowingIntro = ( props ) => {
 				</div>
 
 				<div className="following__intro-close" onClick={ handleIntroClose } title={ props.translate( 'Close' ) } aria-label={ props.translate( 'Close' ) }>
-					<Gridicon icon="cross" className="following__intro-close-icon" title={ props.translate( 'Close' ) } />
+					<div className="following__intro-close-bg">
+						<Gridicon icon="cross-circle" className="following__intro-close-icon" title={ props.translate( 'Close' ) } />
+					</div>
 				</div>
 
 			</div>
