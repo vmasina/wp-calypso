@@ -7,7 +7,7 @@ import dispatcher from 'dispatcher';
  * Internal dependencies
  */
 import { action as ActionTypes } from 'lib/olark-store/constants';
-import olarkApi from 'lib/olark-api';
+import config from 'config';
 
 /**
  * Module variables
@@ -59,33 +59,34 @@ const olarkActions = {
 		} );
 	},
 
+	olarkApiDeprecated() {
+		if ( config( 'env' ) === 'development' ) {
+			throw new Error( 'olarkApi methods are deprecated with no alternative' );
+		}
+	},
+
 	updateDetails() {
-		olarkApi( 'api.visitor.getDetails', ( details ) => {
-			dispatcher.handleServerAction( {
-				details,
-				type: ActionTypes.OLARK_DETAILS,
-			} );
-		} );
+		this.olarkApiDeprecated();
 	},
 
-	sendNotificationToVisitor( body ) {
-		olarkApi( 'api.chat.sendNotificationToVisitor', { body } );
+	sendNotificationToVisitor() {
+		this.olarkApiDeprecated();
 	},
 
-	sendNotificationToOperator( body ) {
-		olarkApi( 'api.chat.sendNotificationToOperator', { body } );
+	sendNotificationToOperator() {
+		this.olarkApiDeprecated();
 	},
 
 	expandBox() {
-		olarkApi( 'api.box.expand' );
+		this.olarkApiDeprecated();
 	},
 
 	shrinkBox() {
-		olarkApi( 'api.box.shrink' );
+		this.olarkApiDeprecated();
 	},
 
 	hideBox() {
-		olarkApi( 'api.box.hide' );
+		this.olarkApiDeprecated();
 	},
 
 	focusBox() {

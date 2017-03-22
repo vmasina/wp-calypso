@@ -1,7 +1,7 @@
+
 /**
  * Internal dependencies
  */
-import olarkApi from 'lib/olark-api';
 import {
 	OLARK_READY,
 	OLARK_REQUEST,
@@ -10,7 +10,6 @@ import {
 	OLARK_OPERATORS_AWAY,
 	OLARK_SET_AVAILABILITY,
 } from 'state/action-types';
-import { OLARK_TIMEOUT_MS } from './constants';
 
 /**
  * Returns an action object to be used in signalling that olark did not load
@@ -79,15 +78,8 @@ export function requestOlark() {
 			type: OLARK_REQUEST
 		} );
 		return new Promise( ( resolve ) => {
-			const timeout = setTimeout( () => {
-				dispatch( olarkTimeout() );
-				resolve();
-			}, OLARK_TIMEOUT_MS );
-			olarkApi( 'api.chat.onReady', () => {
-				clearTimeout( timeout );
-				dispatch( olarkReady() );
-				resolve();
-			} );
+			dispatch( olarkTimeout() );
+			resolve();
 		} );
 	};
 }

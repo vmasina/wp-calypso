@@ -25,7 +25,6 @@ import { removePurchase } from 'state/purchases/actions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import userFactory from 'lib/user';
 import { isOperatorsAvailable, isChatAvailable } from 'state/ui/olark/selectors';
-import olarkApi from 'lib/olark-api';
 import olarkActions from 'lib/olark-store/actions';
 import olarkEvents from 'lib/olark-events';
 import { isDomainOnlySite as isDomainOnly } from 'state/selectors';
@@ -79,9 +78,6 @@ const RemovePurchase = React.createClass( {
 
 	chatStarted() {
 		this.recordChatEvent( 'calypso_precancellation_chat_begin' );
-		olarkApi( 'api.chat.sendNotificationToOperator', {
-			body: 'Context: Precancellation'
-		} );
 	},
 
 	recordChatEvent( eventAction ) {
