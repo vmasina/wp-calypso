@@ -19,29 +19,31 @@ import RootChild from 'components/root-child';
 
 export const DropZone = React.createClass( {
 	propTypes: {
+		customClass: PropTypes.string,
+		fullScreen: PropTypes.bool,
+		icon: PropTypes.node,
 		onDrop: PropTypes.func,
 		onVerifyValidTransfer: PropTypes.func,
 		onFilesDrop: PropTypes.func,
-		fullScreen: PropTypes.bool,
-		icon: PropTypes.string,
-		textLabel: PropTypes.string,
 		translate: PropTypes.func,
+		textLabel: PropTypes.string,
 	},
 
 	getInitialState() {
 		return {
-			isDraggingOverDocument: false,
+			isDraggingOverDocument: true,
 			isDraggingOverElement: false
 		};
 	},
 
 	getDefaultProps() {
 		return {
+			customClass: null,
+			fullScreen: false,
+			icon: <Gridicon icon="cloud-upload" size={ 48 } className="drop-zone__content-icon"/>,
 			onDrop: noop,
 			onVerifyValidTransfer: () => true,
 			onFilesDrop: noop,
-			fullScreen: false,
-			icon: 'cloud-upload',
 			translate: identity,
 		};
 	},
@@ -76,7 +78,7 @@ export const DropZone = React.createClass( {
 		}
 
 		this.setState( {
-			isDraggingOverDocument: false,
+			isDraggingOverDocument: true,
 			isDraggingOverElement: false
 		} );
 	},
@@ -205,7 +207,7 @@ export const DropZone = React.createClass( {
 			content = this.props.children;
 		} else {
 			content = createFragment( {
-				icon: <Gridicon icon={ this.props.icon } size={ 48 } className="drop-zone__content-icon" />,
+				icon: this.props.icon,
 				text: (
 					<span className="drop-zone__content-text">
 						{ textLabel }
@@ -222,7 +224,8 @@ export const DropZone = React.createClass( {
 			'is-active': this.state.isDraggingOverDocument || this.state.isDraggingOverElement,
 			'is-dragging-over-document': this.state.isDraggingOverDocument,
 			'is-dragging-over-element': this.state.isDraggingOverElement,
-			'is-full-screen': this.props.fullScreen
+			'is-full-screen': this.props.fullScreen,
+			[ this.props.customClass ]: true,
 		} );
 
 		const element = (
