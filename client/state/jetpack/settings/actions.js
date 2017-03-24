@@ -14,7 +14,14 @@ import {
 	JETPACK_SETTINGS_UPDATE_FAILURE
 } from 'state/action-types';
 import wp from 'lib/wp';
-import { normalizeSettings, sanitizeSettings, filterSettingsByActiveModules } from './utils';
+import {
+	normalizeSettings,
+	sanitizeSettings,
+	normalizeSettingsForJetpack4_7,
+	sanitizeSettingsForJetpack4_7,
+	filterSettingsByActiveModules
+} from './utils';
+import { isJetpackMinimumVersion } from 'state/sites/selectors';
 
 /**
  * Fetch the Jetpack settings for a certain site.
@@ -23,7 +30,10 @@ import { normalizeSettings, sanitizeSettings, filterSettingsByActiveModules } fr
  * @return {Function}             Action thunk to fetch the Jetpack settings when called.
  */
 export const fetchSettings = ( siteId ) => {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
+		const normalize = isJetpackMinimumVersion( getState(), siteId, '4.8-alpha' )
+			? normalizeSettings
+			: normalizeSettingsForJetpack4_7;
 		dispatch( {
 			type: JETPACK_SETTINGS_REQUEST,
 			siteId
@@ -31,7 +41,7 @@ export const fetchSettings = ( siteId ) => {
 
 		return wp.undocumented().fetchJetpackSettings( siteId )
 			.then( ( response ) => {
-				const settings = normalizeSettings( response.data ) || {};
+				const settings = normalize( response.data ) || {};
 				dispatch( {
 					type: JETPACK_SETTINGS_RECEIVE,
 					siteId,
@@ -59,14 +69,17 @@ export const fetchSettings = ( siteId ) => {
  * @return {Function}             Action thunk to update the Jetpack settings when called.
  */
 export const updateSettings = ( siteId, settings ) => {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
+		const sanitize = isJetpackMinimumVersion( getState(), siteId, '4.8-alpha' )
+			? sanitizeSettings
+			: sanitizeSettingsForJetpack4_7;
 		dispatch( {
 			type: JETPACK_SETTINGS_UPDATE,
 			siteId,
 			settings
 		} );
 
-		return wp.undocumented().updateJetpackSettings( siteId, filterSettingsByActiveModules( sanitizeSettings( settings ) ) )
+		return wp.undocumented().updateJetpackSettings( siteId, filterSettingsByActiveModules( sanitize( settings ) ) )
 			.then( () => {
 				dispatch( {
 					type: JETPACK_SETTINGS_UPDATE_SUCCESS,
