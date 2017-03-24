@@ -101,16 +101,16 @@ const sections = [
 		group: 'sites'
 	},
 	{
-		name: 'settings',
-		paths: [ '/settings' ],
-		module: 'my-sites/site-settings',
+		name: 'settings-traffic',
+		paths: [ '/settings/traffic', '/settings/seo', '/settings/analytics' ],
+		module: 'my-sites/site-settings/traffic',
 		secondary: true,
 		group: 'sites'
 	},
 	{
-		name: 'settings-traffic',
-		paths: [ '/settings/traffic', '/settings/seo', '/settings/analytics' ],
-		module: 'my-sites/site-settings/traffic',
+		name: 'settings',
+		paths: [ '/settings' ],
+		module: 'my-sites/site-settings',
 		secondary: true,
 		group: 'sites'
 	},
