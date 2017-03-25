@@ -21,7 +21,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 var LinkDialog = require( './dialog' );
 
 function wpLink( editor ) {
-	var node, toolbar;
+	var node, toolbar, firstLoadComplete;
 
 	function render( visible = true ) {
 		ReactDom.render(
@@ -29,11 +29,15 @@ function wpLink( editor ) {
 				React.createElement( LinkDialog, {
 					visible: visible,
 					editor: editor,
+					firstLoad: ! firstLoadComplete,
 					onClose: () => render( false )
 				} )
 			),
 			node
 		);
+		if ( visible ) {
+			firstLoadComplete = true;
+		}
 
 		if ( ! visible ) {
 			editor.focus();
