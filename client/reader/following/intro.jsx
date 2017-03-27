@@ -29,11 +29,12 @@ const FollowingIntro = ( props ) => {
 				<div className="following__intro-copy">
 
 						{ props.translate(
-							'{{strong}}Welcome!{{/strong}} Reader is a custom magazine. {{link}}Follow your favorite sites{{/link}} and their latest posts will appear here. Read, like, and comment in a distraction-free environment.',
+							'{{strong}}Welcome!{{/strong}} Reader is a custom magazine. {{link}}Follow your favorite sites{{/link}} and their latest posts will appear here. {{span}}Read, like, and comment in a distraction-free environment.{{/span}}',
 							{
 								components: {
 									link: <a href="/following/edit" />,
-									strong: <strong />
+									strong: <strong />,
+									span: <span className="following__intro-copy-hidden" />
 
 								}
 							}
