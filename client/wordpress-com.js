@@ -115,6 +115,13 @@ const sections = [
 		group: 'sites'
 	},
 	{
+		name: 'settings-discussion',
+		paths: [ '/settings/discussion' ],
+		module: 'my-sites/site-settings/discussion',
+		secondary: true,
+		group: 'sites'
+	},
+	{
 		name: 'sharing',
 		paths: [ '/sharing' ],
 		module: 'my-sites/sharing',
