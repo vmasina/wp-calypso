@@ -95,3 +95,11 @@
 .edit-gravatar .info-popover {
 	vertical-align: middle;
 }
+
+.edit-gravatar__unverified-user .file-picker {
+	pointer-events: none;
+}
+
+.edit-gravatar__unverified-user .gravatar {
+	opacity: 0.33;
+}
