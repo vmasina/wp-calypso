@@ -33,6 +33,7 @@ import {
 import ImageEditor from 'blocks/image-editor';
 import InfoPopover from 'components/info-popover';
 import VerifyEmailDialog from 'components/email-verification/verify-email-dialog';
+import DropZone from 'components/drop-zone';
 
 /**
  * Module dependencies
@@ -219,6 +220,12 @@ export class EditGravatar extends Component {
 								)
 							}
 						>
+							{ user.email_verified && (
+								<DropZone
+									textLabel={ translate( 'Drop to upload profile photo' ) }
+									onFilesDrop={ this.onReceiveFile }
+								/>
+							) }
 							<Gravatar
 								imgSize={ 400 }
 								size={ 150 }
