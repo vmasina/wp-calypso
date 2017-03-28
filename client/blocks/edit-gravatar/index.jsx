@@ -32,7 +32,7 @@ import {
 } from 'state/current-user/gravatar-status/actions';
 import ImageEditor from 'blocks/image-editor';
 import InfoPopover from 'components/info-popover';
-import VerifyEmailDialog from 'post-editor/verify-email-dialog';
+import VerifyEmailDialog from 'components/email-verification/verify-email-dialog';
 
 /**
  * Module dependencies
