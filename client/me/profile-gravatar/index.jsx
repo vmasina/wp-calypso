@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,7 +14,7 @@ import eventRecorder from 'me/event-recorder';
 
 const debug = debugFactory( 'calypso:me:sidebar-gravatar' );
 
-export default React.createClass( {
+const ProfileGravatar = React.createClass( {
 	displayName: 'ProfileGravatar',
 
 	mixins: [ eventRecorder ],
@@ -39,7 +40,7 @@ export default React.createClass( {
 
 						<span className="profile-gravatar__edit-label-wrap">
 							<span className="profile-gravatar__edit-label">
-								{ this.translate( 'Update Profile Photo' ) }
+								{ this.props.translate( 'Update Profile Photo' ) }
 							</span>
 						</span>
 					</a>
@@ -52,3 +53,5 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default localize( ProfileGravatar );
