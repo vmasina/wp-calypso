@@ -28,7 +28,12 @@ import {
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 	SERIALIZE,
 } from 'state/action-types';
-import { HAPPYCHAT_MAX_STORED_MESSAGES } from './constants';
+import {
+	HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
+	HAPPYCHAT_CONNECTION_STATUS_CONNECTING,
+	HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED,
+	HAPPYCHAT_MAX_STORED_MESSAGES,
+} from './constants';
 import { timelineSchema } from './schema';
 
 /**
@@ -143,16 +148,16 @@ export const message = ( state = '', action ) => {
  * @return {Object}        Updated state
  *
  */
-const connectionStatus = ( state = 'disconnected', action ) => {
+const connectionStatus = ( state = HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED, action ) => {
 	switch ( action.type ) {
 		case SERIALIZE:
-			return 'disconnected';
+			return HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED;
 		case DESERIALIZE:
 			return state;
 		case HAPPYCHAT_CONNECTED:
-			return 'connected';
+			return HAPPYCHAT_CONNECTION_STATUS_CONNECTED;
 		case HAPPYCHAT_CONNECTING:
-			return 'connecting';
+			return HAPPYCHAT_CONNECTION_STATUS_CONNECTING;
 	}
 	return state;
 };

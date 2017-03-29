@@ -17,6 +17,9 @@ import {
 	getHappychatStatus,
 	getHappychatConnectionStatus,
 } from 'state/happychat/selectors';
+import {
+	HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
+} from 'state/happychat/constants';
 
 /*
  * Renders any notices about the chat session to the user
@@ -57,7 +60,7 @@ class Notices extends Component {
 }
 
 const mapState = ( state ) => ( {
-	isConnected: getHappychatConnectionStatus( state ) === 'connected',
+	isConnected: getHappychatConnectionStatus( state ) === HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
 	chatStatus: getHappychatStatus( state )
 } );
 

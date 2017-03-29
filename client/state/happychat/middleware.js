@@ -16,6 +16,9 @@ import {
 	HAPPYCHAT_SET_MESSAGE,
 } from 'state/action-types';
 import {
+	HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
+} from './constants';
+import {
 	receiveChatEvent,
 	receiveChatTranscript,
 	setChatConnected,
@@ -127,7 +130,7 @@ export default function( connection = defaultConnection ) {
 				break;
 
 			case HAPPYCHAT_CONNECTING:
-				if ( getHappychatConnectionStatus( store.getState() ) === 'connected' ) {
+				if ( getHappychatConnectionStatus( store.getState() ) === HAPPYCHAT_CONNECTION_STATUS_CONNECTED ) {
 					// If chat is already connected, do nothing and stop the action from proceeding to reducers
 					return;
 				}

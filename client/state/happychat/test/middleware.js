@@ -22,6 +22,10 @@ import {
 	HAPPYCHAT_SET_CHAT_STATUS,
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 } from 'state/action-types';
+import {
+	HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
+	HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED,
+} from './constants';
 import middleware, {
 	connectChat,
 	onConnect,
@@ -63,7 +67,7 @@ describe( 'middleware', () => {
 		const action = { type: HAPPYCHAT_CONNECTING };
 
 		it( 'should do nothing if Happychat is already connected', () => {
-			const getState = stub().returns( { happychat: { connectionStatus: 'connected' } } );
+			const getState = stub().returns( { happychat: { connectionStatus: HAPPYCHAT_CONNECTION_STATUS_CONNECTED } } );
 			const next = stub();
 			const dispatch = stub();
 			middleware( stub() )( { getState, dispatch } )( next )( action );
@@ -76,7 +80,7 @@ describe( 'middleware', () => {
 			let dispatch, getState;
 			const state = deepFreeze( {
 				currentUser: { id: 1 },
-				happychat: { connectionStatus: 'disconnected' },
+				happychat: { connectionStatus: HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED },
 				users: { items: { 1: {} } }
 			} );
 
