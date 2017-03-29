@@ -31,7 +31,9 @@ import {
 	getCurrentUser,
 	getCurrentUserLocale,
 } from 'state/current-user/selectors';
+import buildConnection from 'lib/happychat/connection';
 
+const defaultConnection = buildConnection();
 const debug = require( 'debug' )( 'calypso:happychat:actions' );
 
 const sendTyping = throttle( ( connection, message ) => {
@@ -123,13 +125,7 @@ const sendBrowserInfo = ( connection, siteUrl ) => {
 	connection.info( msg );
 };
 
-export default function( connection = null ) {
-	// Allow a connection object to be specified for
-	// testing. If blank, use a real connection.
-	if ( connection == null ) {
-		connection = require( './common' ).connection;
-	}
-
+export default function( connection = defaultConnection ) {
 	return store => next => action => {
 		switch ( action.type ) {
 			case HAPPYCHAT_CONNECTING:
