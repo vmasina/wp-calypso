@@ -15,11 +15,8 @@ import {
 	HAPPYCHAT_CHAT_STATUS_MISSED,
 	HAPPYCHAT_CHAT_STATUS_ABANDONED,
 	getHappychatStatus,
-	getHappychatConnectionStatus,
+	isHappychatConnected,
 } from 'state/happychat/selectors';
-import {
-	HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
-} from 'state/happychat/constants';
 
 /*
  * Renders any notices about the chat session to the user
@@ -60,7 +57,7 @@ class Notices extends Component {
 }
 
 const mapState = ( state ) => ( {
-	isConnected: getHappychatConnectionStatus( state ) === HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
+	isConnected: isHappychatConnected( state ),
 	chatStatus: getHappychatStatus( state )
 } );
 

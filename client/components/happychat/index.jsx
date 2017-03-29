@@ -11,12 +11,13 @@ import GridIcon from 'gridicons';
  */
 import {
 	first,
-	any,
+	propEquals,
 	when
 } from './functional';
 import { connectChat } from 'state/happychat/actions';
 import {
-	getHappychatConnectionStatus
+	isHappychatConnected,
+	isHappychatConnecting,
 } from 'state/happychat/selectors';
 import {
 	openChat,
@@ -28,15 +29,11 @@ import {
 	isHappychatMinimizing
 } from 'state/ui/happychat/selectors';
 import {
-	isConnected,
-	isConnecting,
 	timeline,
 	composer
 } from './helpers';
 import Notices from './notices';
 import { translate } from 'i18n-calypso';
-
-const isChatOpen = any( isConnected, isConnecting );
 
 /**
  * Renders the title text of the chat sidebar when happychat is connecting.
@@ -75,8 +72,8 @@ const connectedTitle = ( { onCloseChat } ) => (
  * Function for rendering correct titlebar based on happychat client state
  */
 const title = first(
-	when( isConnected, connectedTitle ),
-	when( isConnecting, connectingTitle ),
+	when( propEquals( 'isConnected', true ), connectedTitle ),
+	when( propEquals( 'isConnecting', true ), connectingTitle ),
 	( { onOpenChat } ) => {
 		const onClick = () => onOpenChat();
 		return <div onClick={ onClick }>{ translate( 'Support Chat' ) }</div>;
@@ -94,7 +91,8 @@ const Happychat = React.createClass( {
 
 	render() {
 		const {
-			connectionStatus,
+			isConnected,
+			isConnecting,
 			isMinimizing,
 			user,
 			onCloseChat,
@@ -105,21 +103,22 @@ const Happychat = React.createClass( {
 			<div className="happychat">
 				<div
 					className={ classnames( 'happychat__container', {
-						'is-open': isChatOpen( { connectionStatus } ),
+						'is-open': isConnected || isConnecting,
 						'is-minimizing': isMinimizing
 					} ) } >
 					<div className="happychat__title">
 						{ title( {
-							connectionStatus,
+							isConnected,
+							isConnecting,
 							isMinimizing,
 							user,
 							onCloseChat,
 							onOpenChat
 						} ) }
 					</div>
-					{ timeline( { connectionStatus, isMinimizing } ) }
+					{ timeline( { isConnected, isMinimizing } ) }
 					<Notices />
-					{ composer( { connectionStatus, isMinimizing } ) }
+					{ composer( { isConnected, isMinimizing } ) }
 				</div>
 			</div>
 		);
@@ -128,7 +127,8 @@ const Happychat = React.createClass( {
 
 const mapState = state => {
 	return {
-		connectionStatus: getHappychatConnectionStatus( state ),
+		isConnected: isHappychatConnected( state ),
+		isConnecting: isHappychatConnecting( state ),
 		isMinimizing: isHappychatMinimizing( state )
 	};
 };

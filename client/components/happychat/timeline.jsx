@@ -21,7 +21,6 @@ import scrollbleed from './scrollbleed';
 import { translate } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
 import {
-	getHappychatConnectionStatus,
 	getHappychatTimeline
 } from 'state/happychat/selectors';
 import {
@@ -178,7 +177,6 @@ export const Timeline = React.createClass( {
 const mapProps = state => {
 	const current_user = getCurrentUser( state );
 	return {
-		connectionStatus: getHappychatConnectionStatus( state ),
 		timeline: getHappychatTimeline( state ),
 		isCurrentUser: ( { user_id, source } ) => {
 			return user_id.toString() === current_user.ID.toString() && source === 'customer';

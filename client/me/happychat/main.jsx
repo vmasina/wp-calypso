@@ -10,7 +10,7 @@ import { findDOMNode } from 'react-dom';
 import viewport from 'lib/viewport';
 import { connectChat } from 'state/happychat/actions';
 import { openChat } from 'state/ui/happychat/actions';
-import { getHappychatConnectionStatus } from 'state/happychat/selectors';
+import { isHappychatConnected } from 'state/happychat/selectors';
 import { timeline, composer } from 'components/happychat/helpers';
 
 /**
@@ -32,18 +32,18 @@ class HappychatPage extends Component {
 	}
 
 	render() {
-		const { connectionStatus } = this.props;
+		const { isConnected } = this.props;
 		return (
 			<div className="happychat__page" aria-live="polite" aria-relevant="additions">
-				{ timeline( { connectionStatus } ) }
-				{ composer( { connectionStatus } ) }
+				{ timeline( { isConnected } ) }
+				{ composer( { isConnected } ) }
 			</div>
 		);
 	}
 }
 
 const mapState = state => ( {
-	connectionStatus: getHappychatConnectionStatus( state )
+	isConnected: isHappychatConnected( state )
 } );
 
 export default connect( mapState, { connectChat, openChat } )( HappychatPage );

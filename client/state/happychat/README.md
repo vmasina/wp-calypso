@@ -41,9 +41,17 @@ The current connection status of the Happychat client
 
 Selectors are intended to assist in extracting data from the global state tree for consumption by other modules.
 
-### `getHappychatConnectionStatus( state: Object )`
+### `isHappychatDisconnected( state: Object )`
 
-Returns the current Happychat client connection status.
+Returns `true` if there is no active or attempting connection to Happychat.
+
+### `isHappychatConnected( state: Object )`
+
+Returns `true` if there is an active connection to Happychat.
+
+### `isHappychatConnecting( state: Object )`
+
+Returns `true` if a connection to Happychat is being established.
 
 ### `getHappychatTimeline( state: Object )`
 

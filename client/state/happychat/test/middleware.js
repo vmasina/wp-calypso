@@ -25,7 +25,7 @@ import {
 import {
 	HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
 	HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED,
-} from './constants';
+} from '../constants';
 import middleware, {
 	connectChat,
 	onConnect,

@@ -7,6 +7,11 @@ import { map, head, get } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
+import {
+	HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED,
+	HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
+	HAPPYCHAT_CONNECTION_STATUS_CONNECTING,
+} from './constants';
 
 export const HAPPYCHAT_CHAT_STATUS_ABANDONED = 'abandoned';
 export const HAPPYCHAT_CHAT_STATUS_ASSIGNED = 'assigned';
@@ -28,8 +33,20 @@ export const getHappychatTranscriptTimestamp = state => (
  * @param {Object} state - global redux state
  * @return {String} current state value
  */
-export const getHappychatConnectionStatus = createSelector(
+const getHappychatConnectionStatus = createSelector(
 	state => state.happychat.connectionStatus
+);
+
+export const isHappychatDisconnected = createSelector(
+	state => getHappychatConnectionStatus( state ) === HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED
+);
+
+export const isHappychatConnected = createSelector(
+	state => getHappychatConnectionStatus( state ) === HAPPYCHAT_CONNECTION_STATUS_CONNECTED
+);
+
+export const isHappychatConnecting = createSelector(
+	state => getHappychatConnectionStatus( state ) === HAPPYCHAT_CONNECTION_STATUS_CONNECTING
 );
 
 export const isHappychatChatActive = createSelector(
