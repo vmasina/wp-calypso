@@ -44,6 +44,7 @@ export getPastBillingTransaction from './get-past-billing-transaction';
 export getPastBillingTransactions from './get-past-billing-transactions';
 export getPostLikes from './get-post-likes';
 export getRawOffsets from './get-raw-offsets';
+export getReaderFeedsForQuery from './get-reader-feeds-for-query';
 export getReaderTeams from './get-reader-teams';
 export getReaderFollowedTags from './get-reader-followed-tags';
 export getReaderTags from './get-reader-tags';
