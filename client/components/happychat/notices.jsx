@@ -16,7 +16,7 @@ import {
 	HAPPYCHAT_CHAT_STATUS_ABANDONED,
 	getHappychatStatus,
 	isHappychatConnected,
-} from 'state/happychat/selectors';
+} from 'state/happychat/constants';
 
 /*
  * Renders any notices about the chat session to the user
