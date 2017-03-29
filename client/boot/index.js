@@ -408,7 +408,7 @@ function reduxStoreReady( reduxStore ) {
 			document.getElementsByClassName( 'wp-singletree-layout' ).length
 		);
 
-		const singleTreeSections = [ 'posts-custom', 'theme', 'themes' ];
+		const singleTreeSections = [ 'account-recovery', 'posts-custom', 'theme', 'themes' ];
 		const sectionName = getSectionName( context.store.getState() );
 		const isMultiTreeLayout = ! includes( singleTreeSections, sectionName );
 
