@@ -16,10 +16,10 @@ import {
 	HAPPYCHAT_TRANSCRIPT_REQUEST,
 } from 'state/action-types';
 import {
-	setChatConnected,
 	receiveChatEvent,
 	receiveChatTranscript,
 	requestChatTranscript,
+	setChatConnected,
 	setHappychatAvailable,
 	setHappychatChatStatus,
 } from './actions';

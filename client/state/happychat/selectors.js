@@ -8,12 +8,12 @@ import { map, head, get } from 'lodash';
  */
 import createSelector from 'lib/create-selector';
 
-export const HAPPYCHAT_CHAT_STATUS_DEFAULT = 'default';
+export const HAPPYCHAT_CHAT_STATUS_ABANDONED = 'abandoned';
 export const HAPPYCHAT_CHAT_STATUS_ASSIGNED = 'assigned';
 export const HAPPYCHAT_CHAT_STATUS_ASSIGNING = 'assigning';
-export const HAPPYCHAT_CHAT_STATUS_PENDING = 'pending';
+export const HAPPYCHAT_CHAT_STATUS_DEFAULT = 'default';
 export const HAPPYCHAT_CHAT_STATUS_MISSED = 'missed';
-export const HAPPYCHAT_CHAT_STATUS_ABANDONED = 'abandoned';
+export const HAPPYCHAT_CHAT_STATUS_PENDING = 'pending';
 
 export const getHappychatChatStatus = createSelector(
 	state => state.happychat.chatStatus

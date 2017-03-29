@@ -17,16 +17,16 @@ import validator from 'is-my-json-valid';
  * Internal dependencies
  */
 import {
-	SERIALIZE,
 	DESERIALIZE,
+	HAPPYCHAT_CONNECTED,
+	HAPPYCHAT_CONNECTING,
+	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_AVAILABLE,
-	HAPPYCHAT_SET_MESSAGE,
-	HAPPYCHAT_RECEIVE_EVENT,
-	HAPPYCHAT_CONNECTING,
-	HAPPYCHAT_CONNECTED,
 	HAPPYCHAT_SET_CHAT_STATUS,
+	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
+	SERIALIZE,
 } from 'state/action-types';
 import { HAPPYCHAT_MAX_STORED_MESSAGES } from './constants';
 import { timelineSchema } from './schema';
@@ -149,10 +149,10 @@ const connectionStatus = ( state = 'disconnected', action ) => {
 			return 'disconnected';
 		case DESERIALIZE:
 			return state;
-		case HAPPYCHAT_CONNECTING:
-			return 'connecting';
 		case HAPPYCHAT_CONNECTED:
 			return 'connected';
+		case HAPPYCHAT_CONNECTING:
+			return 'connecting';
 	}
 	return state;
 };
