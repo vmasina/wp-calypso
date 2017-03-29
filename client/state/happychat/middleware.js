@@ -9,16 +9,15 @@ import throttle from 'lodash/throttle';
  */
 import wpcom from 'lib/wp';
 import {
+	HAPPYCHAT_CONNECTED,
 	HAPPYCHAT_CONNECTING,
 	HAPPYCHAT_SEND_BROWSER_INFO,
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_MESSAGE,
-	HAPPYCHAT_TRANSCRIPT_REQUEST,
 } from 'state/action-types';
 import {
 	receiveChatEvent,
 	receiveChatTranscript,
-	requestChatTranscript,
 	setChatConnected,
 	setHappychatAvailable,
 	setHappychatChatStatus,
@@ -75,11 +74,6 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 		.then(
 			() => {
 				dispatch( setChatConnected() );
-
-				// TODO: There's no need to dispatch a separate action to request a transcript.
-				// The HAPPYCHAT_CONNECTED action should have its own middleware handler that does this.
-				dispatch( requestChatTranscript() );
-
 				connection
 					.on( 'message', event => dispatch( receiveChatEvent( event ) ) )
 					.on( 'status', status => dispatch( setHappychatChatStatus( status ) ) )
@@ -89,7 +83,7 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 		);
 };
 
-export const requestTranscript = ( connection, { getState, dispatch } ) => {
+export const onConnect = ( connection, { getState, dispatch } ) => {
 	const timestamp = getHappychatTranscriptTimestamp( getState() );
 	debug( 'requesting transcript', timestamp );
 	return connection.transcript( timestamp ).then(
@@ -128,6 +122,10 @@ const sendBrowserInfo = ( connection, siteUrl ) => {
 export default function( connection = defaultConnection ) {
 	return store => next => action => {
 		switch ( action.type ) {
+			case HAPPYCHAT_CONNECTED:
+				onConnect( connection, store );
+				break;
+
 			case HAPPYCHAT_CONNECTING:
 				if ( getHappychatConnectionStatus( store.getState() ) === 'connected' ) {
 					// If chat is already connected, do nothing and stop the action from proceeding to reducers
@@ -146,10 +144,6 @@ export default function( connection = defaultConnection ) {
 
 			case HAPPYCHAT_SET_MESSAGE:
 				onMessageChange( connection, action.message );
-				break;
-
-			case HAPPYCHAT_TRANSCRIPT_REQUEST:
-				requestTranscript( connection, store );
 				break;
 		}
 		return next( action );

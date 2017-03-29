@@ -21,14 +21,43 @@ import {
 	HAPPYCHAT_SET_AVAILABLE,
 	HAPPYCHAT_SET_CHAT_STATUS,
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
-	HAPPYCHAT_TRANSCRIPT_REQUEST,
 } from 'state/action-types';
 import middleware, {
 	connectChat,
-	requestTranscript,
+	onConnect,
 } from '../middleware';
 
 describe( 'middleware', () => {
+	describe( 'HAPPYCHAT_CONNECTED action', () => {
+		it( 'should fetch transcript from connection and dispatch receive action', () => {
+			const state = deepFreeze( {
+				happychat: {
+					timeline: []
+				}
+			} );
+			const response = {
+				messages: [
+					{ text: 'hello' }
+				],
+				timestamp: 100000,
+			};
+
+			const connection = { transcript: stub().returns( Promise.resolve( response ) ) };
+			const dispatch = stub();
+			const getState = stub().returns( state );
+
+			return onConnect( connection, { getState, dispatch } )
+				.then( () => {
+					expect( connection.transcript ).to.have.been.called;
+
+					expect( dispatch ).to.have.been.calledWith( {
+						type: HAPPYCHAT_TRANSCRIPT_RECEIVE,
+						...response,
+					} );
+				} );
+		} );
+	} );
+
 	describe( 'HAPPYCHAT_CONNECTING action', () => {
 		// TODO: Add tests for cases outside the happy path
 		const action = { type: HAPPYCHAT_CONNECTING };
@@ -68,11 +97,6 @@ describe( 'middleware', () => {
 			it( 'should send notice of the connection state', () => {
 				return connectChat( connection, { dispatch, getState } )
 					.then( () => expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_CONNECTED } ) );
-			} );
-
-			it( 'should fetch transcripts', () => {
-				return connectChat( connection, { dispatch, getState } )
-					.then( () => expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_TRANSCRIPT_REQUEST } ) );
 			} );
 
 			it( 'should set up listeners for various connection events', () => {
@@ -136,36 +160,6 @@ describe( 'middleware', () => {
 			const connection = { notTyping: spy() };
 			middleware( connection )()( noop )( action );
 			expect( connection.notTyping ).to.have.been.calledOnce;
-		} );
-	} );
-
-	describe( 'HAPPYCHAT_TRANSCRIPT_REQUEST action', () => {
-		it( 'should fetch transcript from connection and dispatch receive action', () => {
-			const state = deepFreeze( {
-				happychat: {
-					timeline: []
-				}
-			} );
-			const response = {
-				messages: [
-					{ text: 'hello' }
-				],
-				timestamp: 100000,
-			};
-
-			const connection = { transcript: stub().returns( Promise.resolve( response ) ) };
-			const dispatch = stub();
-			const getState = stub().returns( state );
-
-			return requestTranscript( connection, { getState, dispatch } )
-				.then( () => {
-					expect( connection.transcript ).to.have.been.called;
-
-					expect( dispatch ).to.have.been.calledWith( {
-						type: HAPPYCHAT_TRANSCRIPT_RECEIVE,
-						...response,
-					} );
-				} );
 		} );
 	} );
 } );

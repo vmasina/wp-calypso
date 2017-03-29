@@ -18,13 +18,11 @@ import {
 	HAPPYCHAT_SET_CHAT_STATUS,
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
-	HAPPYCHAT_TRANSCRIPT_REQUEST,
 } from 'state/action-types';
 
 export const connectChat = () => ( { type: HAPPYCHAT_CONNECTING } );
 export const receiveChatEvent = event => ( { type: HAPPYCHAT_RECEIVE_EVENT, event } );
 export const receiveChatTranscript = ( messages, timestamp ) => ( { type: HAPPYCHAT_TRANSCRIPT_RECEIVE, messages, timestamp } );
-export const requestChatTranscript = () => ( { type: HAPPYCHAT_TRANSCRIPT_REQUEST } );
 export const setChatConnected = () => ( { type: HAPPYCHAT_CONNECTED } );
 export const setHappychatAvailable = isAvailable => ( { type: HAPPYCHAT_SET_AVAILABLE, isAvailable } );
 export const setHappychatChatStatus = status => ( { type: HAPPYCHAT_SET_CHAT_STATUS, status } );
