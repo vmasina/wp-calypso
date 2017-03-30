@@ -329,4 +329,13 @@ sections.push( {
 	secondary: true
 } );
 
+sections.push( {
+	name: 'verify-email-forward',
+	paths: [ '/verify-email-forward' ],
+	module: 'my-sites/upgrades/verify-email-forward',
+	enableLoggedOut: true,
+	secondary: false,
+	isomorphic: true
+} );
+
 module.exports = sections;
