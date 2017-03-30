@@ -35,7 +35,7 @@ const SiteSettingsTraffic = ( {
 	translate,
 	upgradeToBusiness
 } ) => (
-	<Main className="traffic__main site-settings">
+	<Main className="settings-traffic__main site-settings">
 		<DocumentHead title={ translate( 'Site Settings' ) } />
 		<SidebarNavigation />
 		<SiteSettingsNavigation site={ site } section="traffic" />
