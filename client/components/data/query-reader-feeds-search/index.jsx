@@ -12,12 +12,11 @@ import { requestFeedSearch } from 'state/reader/feed-search/actions';
 class QueryFeedSearch extends Component {
 	static propTypes = {
 		query: PropTypes.string,
-		searchFeeds: PropTypes.func,
+		requestFeedSearch: PropTypes.func,
 	}
 
 	componentWillMount() {
-		const { searchFeeds, query } = this.props;
-		searchFeeds( query );
+		this.props.requestFeedSearch( this.props.query );
 	}
 
 	render() {

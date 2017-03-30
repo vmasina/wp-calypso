@@ -5,6 +5,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { trim, debounce, sampleSize, map, take } from 'lodash';
 import { localize } from 'i18n-calypso';
+import page from 'page';
+import qs from 'qs';
 
 /**
  * Internal Dependencies
@@ -16,8 +18,9 @@ import HeaderBack from 'reader/header-back';
 import SearchInput from 'components/search';
 import ReaderMain from 'components/reader-main';
 import SubscriptionListItem from 'blocks/reader-subscription-list-item/';
-import { getReaderFollows } from 'state/selectors';
+import { getReaderFollows, getReaderFeedsForQuery } from 'state/selectors';
 import QueryReaderFollows from 'components/data/query-reader-follows';
+import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import feedSiteFluxAdapter from 'lib/reader-site-feed-flux-adapter';
 // import { recordTrackForPost, recordAction, recordTrack } from 'reader/stats';
 // import { } from 'reader/follow-button/follow-sources';
@@ -48,6 +51,8 @@ const ConnectedFollowListItem = localize( feedSiteFluxAdapter(
 			translate={ translate }
 			feedId={ feedId }
 			siteId={ siteId }
+			site={ site }
+			feed={ feed }
 		/>
 	)
 ) );
@@ -66,7 +71,11 @@ class FollowingManage extends Component {
 			) ||
 			newValue === ''
 		) {
-			this.props.onQueryChange( newValue );
+			let searchUrl = '/following/manage';
+			if ( newValue ) {
+				searchUrl += '?' + qs.stringify( { q: newValue } );
+			}
+			page.replace( searchUrl );
 		}
 	}
 
@@ -126,7 +135,7 @@ class FollowingManage extends Component {
 	}
 
 	render() {
-		const { query, translate, follows } = this.props;
+		const { query, translate, follows, searchResults } = this.props;
 		const searchPlaceholderText = translate( 'Search millions of sites' );
 		const recommendations = this.state.recommendations;
 		// console.error( follows );
@@ -135,7 +144,8 @@ class FollowingManage extends Component {
 		return (
 			<ReaderMain className="following-manage">
 				{ this.props.showBack && <HeaderBack /> }
-				{ this.props.follows.length === 0 && <QueryReaderFollows /> }
+				{ follows.length === 0 && <QueryReaderFollows /> }
+				{ searchResults.length === 0 && <QueryReaderFeedsSearch query={ query } /> }
 				<h1> Follow Something New </h1>
 				<DocumentHead title={ 'Manage Following' } />
 				<div ref={ this.handleStreamMounted } />
@@ -153,7 +163,7 @@ class FollowingManage extends Component {
 						</SearchInput>
 					</CompactCard>
 				</div>
-				<RecommendedPosts recommendations={ recommendations } />
+				{ ! query && <RecommendedPosts recommendations={ recommendations } /> }
 				{ map( followsToShow, follow =>
 					<ConnectedFollowListItem
 						key={ `follow-${ follow.URL }` }
@@ -168,7 +178,8 @@ class FollowingManage extends Component {
 }
 
 export default connect(
-	state => ( {
-		follows: getReaderFollows( state )
+	( state, ownProps ) => ( {
+		follows: getReaderFollows( state ),
+		searchResults: getReaderFeedsForQuery( state, ownProps.query ) || [],
 	} ),
 )(	localize( FollowingManage ) );

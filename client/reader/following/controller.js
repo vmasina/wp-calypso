@@ -63,6 +63,7 @@ export default {
 				context={ context }
 				userSettings={ userSettings }
 				recommendationsStore={ recommendationsStore }
+				query={ context.query && context.query.q }
 			/>,
 			document.getElementById( 'primary' ),
 			context.store
