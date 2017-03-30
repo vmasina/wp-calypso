@@ -61,15 +61,15 @@ const NoticesList = React.createClass( {
 					isCompact={ notice.isCompact }
 					onDismissClick={ this.removeNotice.bind( this, notice ) }
 					showDismiss={ notice.showDismiss }
-					>
-					{ notice.button &&
-						<NoticeAction
-							href={ notice.href }
-							onClick={ notice.onClick }
-							>
-							{ notice.button }
-						</NoticeAction>
-					}
+				>
+				{ notice.button &&
+					<NoticeAction
+						href={ notice.href }
+						onClick={ notice.onClick }
+						>
+						{ notice.button }
+					</NoticeAction>
+				}
 				</Notice>
 			);
 		}, this );
@@ -86,15 +86,15 @@ const NoticesList = React.createClass( {
 					showDismiss={ notice.showDismiss }
 					onDismissClick={ this.props.removeNotice.bind( this, notice.noticeId ) }
 					text={ notice.text }
-					>
-					{ notice.button &&
-						<NoticeAction
-							href={ notice.href }
-							onClick={ notice.onClick }
-							>
-							{ notice.button }
-						</NoticeAction>
-					}
+				>
+				{ notice.button &&
+					<NoticeAction
+						href={ notice.href }
+						onClick={ notice.onClick }
+						>
+						{ notice.button }
+					</NoticeAction>
+				}
 				</Notice>
 			);
 		}, this ) );
