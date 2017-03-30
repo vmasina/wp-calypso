@@ -50,6 +50,7 @@ const NoticesList = React.createClass( {
 
 	render() {
 		const noticesRaw = this.props.notices[ this.props.id ] || [];
+
 		let noticesList = noticesRaw.map( function( notice, index ) {
 			return (
 				<Notice
@@ -60,15 +61,15 @@ const NoticesList = React.createClass( {
 					isCompact={ notice.isCompact }
 					onDismissClick={ this.removeNotice.bind( this, notice ) }
 					showDismiss={ notice.showDismiss }
-				>
+					>
 					{ notice.button &&
-						<NoticeAction
-							href={ notice.href }
-							onClick={ notice.onClick }
+					<NoticeAction
+						href={ notice.href }
+						onClick={ notice.onClick }
 						>
-							{ notice.button }
-						</NoticeAction> }
-					</Notice>
+						{ notice.button }
+					</NoticeAction> }
+				</Notice>
 			);
 		}, this );
 
@@ -83,7 +84,16 @@ const NoticesList = React.createClass( {
 					duration = { notice.duration || null }
 					showDismiss={ notice.showDismiss }
 					onDismissClick={ this.props.removeNotice.bind( this, notice.noticeId ) }
-					text={ notice.text }>
+					text={ notice.text }
+					>
+						{ notice.button &&
+						<NoticeAction
+							href={ notice.href }
+							onClick={ notice.onClick }
+						>
+						{ notice.button }
+						</NoticeAction>
+					}
 				</Notice>
 			);
 		}, this ) );

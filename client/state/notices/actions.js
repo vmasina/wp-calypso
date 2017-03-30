@@ -26,7 +26,10 @@ export function createNotice( status, text, options = {} ) {
 		isPersistent: options.isPersistent || false,
 		displayOnNextPage: options.displayOnNextPage || false,
 		status: status,
-		text: text
+		text: text,
+		button: options.button,
+		href: options.href,
+		onClick: options.onClick
 	};
 
 	return {
