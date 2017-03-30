@@ -21,12 +21,15 @@ import { recordStat, recordEvent } from 'lib/posts/stats';
 import siteUtils from 'lib/site/utils';
 import { isBusiness, isEnterprise } from 'lib/products-values';
 import QueryPostTypes from 'components/data/query-post-types';
+import QuerySiteSettings from 'components/data/query-site-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import { isJetpackMinimumVersion } from 'state/sites/selectors';
 import config from 'config';
+import { isPrivateSite } from 'state/selectors';
+import { isHiddenSite } from 'state/selectors';
 
 import EditorDrawerTaxonomies from './taxonomies';
 import EditorDrawerPageOptions from './page-options';
@@ -249,7 +252,9 @@ const EditorDrawer = React.createClass( {
 
 		const { plan } = this.props.site;
 		const hasBusinessPlan = isBusiness( plan ) || isEnterprise( plan );
-		if ( ! hasBusinessPlan ) {
+		const { isPrivate, isHidden } = this.props;
+
+		if ( ! hasBusinessPlan || isPrivate || isHidden ) {
 			return;
 		}
 
@@ -332,6 +337,9 @@ const EditorDrawer = React.createClass( {
 				{ site && (
 					<QueryPostTypes siteId={ site.ID } />
 				) }
+				{ site && (
+					<QuerySiteSettings siteId={ site.ID } />
+				) }
 				{ this.renderStatus() }
 				{ this.renderTaxonomies() }
 				{ this.renderFeaturedImage() }
@@ -353,7 +361,9 @@ export default connect(
 		return {
 			canJetpackUseTaxonomies: isJetpackMinimumVersion( state, siteId, '4.1' ),
 			jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4-beta1' ),
-			typeObject: getPostType( state, siteId, type )
+			typeObject: getPostType( state, siteId, type ),
+			isPrivate: isPrivateSite( state, siteId ),
+			isHidden: isHiddenSite( state, siteId ),
 		};
 	},
 	null,

@@ -8,15 +8,6 @@ module.exports = {
 		},
 		defaultVariation: 'singlePurchaseFlow'
 	},
-	signupStore: {
-		datestamp: '20160927',
-		variations: {
-			designTypeWithoutStore: 0,
-			designTypeWithStore: 100,
-		},
-		defaultVariation: 'designTypeWithStore',
-		allowExistingUsers: false,
-	},
 	userFirstSignup: {
 		datestamp: '20160124',
 		variations: {
@@ -26,25 +17,16 @@ module.exports = {
 		defaultVariation: 'userLast',
 		allowExistingUsers: false,
 	},
-	premiumSquaredPlansWording: {
-		datestamp: '20170111',
-		variations: {
-			withoutMarketingCopy: 50,
-			withMarketingCopy: 50
-		},
-		defaultVariation: 'withoutMarketingCopy',
-		allowExistingUsers: true
-	},
-	signupDomainsHeadline: {
-		datestamp: '20170313',
-		variations: {
-			original: 50,
-			updated: 50
-		},
-		defaultVariation: 'original'
-	},
 	signupStepOneCopyChanges: {
 		datestamp: '20170307',
+		variations: {
+			original: 0,
+			modified: 100, //Test completed. Sending copy for translation.
+		},
+		defaultVariation: 'original',
+	},
+	signupStepOneMobileOptimize: {
+		datestamp: '20170322',
 		variations: {
 			original: 50,
 			modified: 50,
@@ -68,5 +50,31 @@ module.exports = {
 		},
 		defaultVariation: 'disabled',
 		allowExistingUsers: false
+	},
+	domainSuggestionNudgeLabels: {
+		datestamp: '20170327',
+		variations: {
+			original: 50,
+			withLabels: 50
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: false
+	},
+	jetpackNewDescriptions: {
+		datestamp: '20170327',
+		variations: {
+			showNew: 50,
+			showOld: 50
+		},
+		defaultVariation: 'showOld',
+		allowExistingUsers: true
+	},
+	signupSurveyStep: {
+		datestamp: '20170329',
+		variations: {
+			showSurveyStep: 20,
+			hideSurveyStep: 80,
+		},
+		defaultVariation: 'hideSurveyStep',
 	},
 };

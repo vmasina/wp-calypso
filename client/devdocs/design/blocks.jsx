@@ -13,13 +13,17 @@ import Collection from 'devdocs/design/search-collection';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SearchCard from 'components/search-card';
+import { isEnabled } from 'config';
 
 /**
  * Docs examples
  */
 import CreditCardForm from 'blocks/credit-card-form/docs/example';
+import CalendarButton from 'blocks/calendar-button/docs/example';
+import CalendarPopover from 'blocks/calendar-popover/docs/example';
 import AuthorSelector from 'blocks/author-selector/docs/example';
 import CommentButtons from 'blocks/comment-button/docs/example';
+import DisconnectJetpackDialog from 'blocks/disconnect-jetpack-dialog/docs/example';
 import FollowButton from 'blocks/follow-button/docs/example';
 import LikeButtons from 'blocks/like-button/docs/example';
 import PostSchedule from 'components/post-schedule/docs/example';
@@ -57,6 +61,9 @@ import DailyPostButton from 'blocks/daily-post-button/docs/example';
 import ReaderSubscriptionListItem from 'blocks/reader-subscription-list-item/docs/example';
 import PostLikes from 'blocks/post-likes/docs/example';
 import ReaderFeaturedVideo from 'blocks/reader-featured-video/docs/example';
+import NpsSurvey from 'blocks/nps-survey/docs/example';
+import ReaderExportButton from 'blocks/reader-export-button/docs/example';
+import SharingPreviewPane from 'blocks/sharing-preview-pane/docs/example';
 
 export default React.createClass( {
 
@@ -95,7 +102,10 @@ export default React.createClass( {
 					section="blocks"
 				>
 					<AuthorSelector />
+					<CalendarButton />
+					<CalendarPopover />
 					<CommentButtons />
+					<DisconnectJetpackDialog />
 					<CreditCardForm />
 					<FollowButton />
 					<HappinessSupport />
@@ -134,6 +144,9 @@ export default React.createClass( {
 					<DailyPostButton />
 					<PostLikes />
 					<ReaderFeaturedVideo />
+					{ isEnabled( 'nps-survey/devdocs' ) && <NpsSurvey /> }
+					<ReaderExportButton />
+					<SharingPreviewPane />
 				</Collection>
 			</Main>
 		);

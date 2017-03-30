@@ -10,10 +10,20 @@
 	z-index: z-index( 'root', '.is-group-editor::before' );
 }
 
+.is-group-editor .sidebar {
+	left: auto;
+	right: -273px;
+}
+
 @include breakpoint( "<660px" ) {
 	.is-group-editor.focus-sidebar::before {
 		background-color: lighten( $gray, 30% );
 	}
+
+	.is-group-editor .sidebar {
+		right: auto;
+	}
+
 }
 
 .is-group-editor .layout__content {
@@ -24,12 +34,7 @@
 .post-editor__inner {
 	position: relative;
 	top: 47px;
-
-	@include breakpoint( "<660px" ) {
-		overflow-x: hidden;
-		margin-bottom: 47px;
-		border-bottom: 1px solid lighten( $gray, 20 );
-	}
+	padding-bottom: 47px;
 }
 
 .post-editor__content {
@@ -97,12 +102,9 @@
 .editor__header,
 .editor .mce-container-body,
 .editor .tinymce {
-	max-width: 100%;
+	width: 100%;
+	max-width: 700px;
 	margin: 0 auto;
-
-	@include breakpoint( ">960px" ) {
-		width: 700px;
-	}
 }
 
 .focus-content .editor__header {
@@ -113,6 +115,7 @@
 
 .editor__header,
 .editor .mce-edit-area {
+	box-sizing: border-box;
 	padding: 0 16px;
 
 	@include breakpoint( ">1040px" ) {

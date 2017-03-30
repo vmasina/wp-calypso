@@ -123,7 +123,7 @@ const Search = React.createClass( {
 			this.setState( { isOpen: nextProps.isOpen } );
 		}
 
-		if ( nextProps.value && nextProps.value !== this.state.keyword ) {
+		if ( this.props.value !== nextProps.value && nextProps.value && nextProps.value !== this.state.keyword ) {
 			this.setState( { keyword: nextProps.value } );
 		}
 	},
@@ -355,7 +355,7 @@ const Search = React.createClass( {
 						role="search"
 						value={ searchValue }
 						ref="searchInput"
-						onChange={ this.onChange }
+						onInput={ this.onChange /* onChange has bug IE11 React15 https://github.com/facebook/react/issues/7027 */ }
 						onKeyUp={ this.keyUp }
 						onKeyDown={ this.keyDown }
 						onMouseUp={ this.props.onClick }

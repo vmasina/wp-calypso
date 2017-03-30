@@ -10,6 +10,7 @@ import page from 'page';
  */
 import wpcom from 'lib/wp';
 import wporg from 'lib/wporg';
+import { prependFilterKeys } from 'my-sites/themes/theme-filters';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
@@ -56,6 +57,7 @@ import {
 	getThemeCustomizeUrl,
 	getWpcomParentThemeId,
 	shouldFilterWpcomThemes,
+	isDownloadableFromWpcom,
 } from './selectors';
 import {
 	getThemeIdFromStylesheet,
@@ -181,12 +183,15 @@ export function requestThemes( siteId, query = {} ) {
 				themes = map( rawThemes, normalizeJetpackTheme );
 			}
 
-			if ( query.search && query.page === 1 ) {
+			if ( ( query.search || query.filter ) && query.page === 1 ) {
 				const responseTime = ( new Date().getTime() ) - startTime;
+				const search_taxonomies = prependFilterKeys( query.filter );
+				const search_term = search_taxonomies + ( query.search || '' );
 				const trackShowcaseSearch = recordTracksEvent(
 					'calypso_themeshowcase_search',
 					{
-						search_term: query.search || null,
+						search_term: search_term || null,
+						search_taxonomies,
 						tier: query.tier,
 						response_time_in_ms: responseTime,
 						result_count: found,
@@ -404,7 +409,8 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 		};
 		const previousThemeId = getActiveTheme( getState(), siteId );
 		const query = getLastThemeQuery( getState(), siteId );
-
+		const search_taxonomies = prependFilterKeys( query.filter );
+		const search_term = search_taxonomies + ( query.search || '' );
 		const trackThemeActivation = recordTracksEvent(
 			'calypso_themeshowcase_theme_activate',
 			{
@@ -412,7 +418,8 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 				previous_theme: previousThemeId,
 				source: source,
 				purchased: purchased,
-				search_term: query.search || null
+				search_term: search_term || null,
+				search_taxonomies
 			}
 		);
 		dispatch( withAnalytics( trackThemeActivation, action ) );
@@ -638,27 +645,24 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 			} );
 		} )
 			.then( ( { transfer_id } ) => {
+				if ( ! transfer_id ) {
+					return dispatch(
+						transferInitiateFailure( siteId, { error: 'initiate_failure' }, plugin )
+					);
+				}
 				const themeInitiateSuccessAction = {
 					type: THEME_TRANSFER_INITIATE_SUCCESS,
 					siteId,
 					transferId: transfer_id,
 				};
 				dispatch( withAnalytics(
-					recordTracksEvent( 'calypso_automatic_transfer_inititate_success', { plugin } ),
+					recordTracksEvent( 'calypso_automated_transfer_inititate_success', { plugin } ),
 					themeInitiateSuccessAction
 				) );
 				dispatch( pollThemeTransferStatus( siteId, transfer_id ) );
 			} )
 			.catch( error => {
-				const themeInitiateFailureAction = {
-					type: THEME_TRANSFER_INITIATE_FAILURE,
-					siteId,
-					error,
-				};
-				dispatch( withAnalytics(
-					recordTracksEvent( 'calypso_automatic_transfer_inititate_failure', { plugin } ),
-					themeInitiateFailureAction
-				) );
+				dispatch( transferInitiateFailure( siteId, error, plugin ) );
 			} );
 	};
 }
@@ -685,6 +689,20 @@ function transferStatusFailure( siteId, transferId, error ) {
 	};
 }
 
+// receive a transfer initiation failure
+function transferInitiateFailure( siteId, error, plugin ) {
+	return dispatch => {
+		const themeInitiateFailureAction = {
+			type: THEME_TRANSFER_INITIATE_FAILURE,
+			siteId,
+			error,
+		};
+		dispatch( withAnalytics(
+			recordTracksEvent( 'calypso_automated_transfer_inititate_failure', { plugin } ),
+			themeInitiateFailureAction
+		) );
+	};
+}
 /**
  * Make API calls to the transfer status endpoint until a status complete is received,
  * or an error is received, or the timeout is reached.
@@ -713,7 +731,7 @@ export function pollThemeTransferStatus( siteId, transferId, interval = 3000, ti
 					dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
 					if ( status === 'complete' ) {
 						// finished, stop polling
-						dispatch( recordTracksEvent( 'calypso_automatic_transfer_complete', { transfer_id: transferId } ) );
+						dispatch( recordTracksEvent( 'calypso_automated_transfer_complete', { transfer_id: transferId } ) );
 						return resolve();
 					}
 					// poll again
@@ -816,9 +834,22 @@ export function hideThemePreview() {
 	};
 }
 
+/**
+ * Install of any theme hosted as a zip on wpcom must
+ * be suffixed with -wpcom. Themes on AT sites are not
+ * installed via downloaded zip.
+ *
+ * @param {Object} state Global state tree
+ * @param {number} siteId Site ID
+ * @param {string} themeId Theme ID
+ * @return {string} the theme id to use when installing the theme
+ */
 function suffixThemeIdForInstall( state, siteId, themeId ) {
 	// AT sites do not use the -wpcom suffix
 	if ( isSiteAutomatedTransfer( state, siteId ) ) {
+		return themeId;
+	}
+	if ( ! isDownloadableFromWpcom( state, themeId ) ) {
 		return themeId;
 	}
 	return themeId + '-wpcom';

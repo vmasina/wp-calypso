@@ -1200,17 +1200,6 @@ Undocumented.prototype.readSearch = function( query, fn ) {
 	return this.wpcom.req.get( '/read/search', params, fn );
 };
 
-Undocumented.prototype.readTag = function( query, fn ) {
-	var params = omit( query, 'slug' );
-	debug( '/read/tag/' + query.slug );
-	return this.wpcom.req.get( '/read/tags/' + query.slug, params, fn );
-};
-
-Undocumented.prototype.readTags = function( fn ) {
-	debug( '/read/tags' );
-	return this.wpcom.req.get( '/read/tags', fn );
-};
-
 Undocumented.prototype.readTagPosts = function( query, fn ) {
 	var params = omit( query, 'tag' );
 	debug( '/read/tags/' + query.tag + '/posts' );
@@ -1453,6 +1442,29 @@ Undocumented.prototype.usersNew = function( query, fn ) {
 		path: '/users/new',
 		body: query
 	};
+	return this.wpcom.req.post( args, fn );
+};
+
+/**
+ * Sign up for a new account with a social service (e.g. Google/Facebook).
+ *
+ * @param {string} service - Social service associated with token, e.g. google.
+ * @param {string} token - Token returned from service.
+ * @param {Function} fn - callback
+ *
+ * @return {Promise} A promise for the request
+ */
+Undocumented.prototype.usersSocialNew = function( service, token, fn ) {
+	const body = { service, token, locale: i18n.getLocaleSlug() };
+
+	// This API call is restricted to these OAuth keys
+	restrictByOauthKeys( body );
+
+	const args = {
+		path: '/users/social/new',
+		body
+	};
+
 	return this.wpcom.req.post( args, fn );
 };
 
@@ -2350,6 +2362,27 @@ Undocumented.prototype.transferStatus = function( siteId, transferId ) {
 	return this.wpcom.req.get( {
 		path: `/sites/${ siteId }/automated-transfers/status/${ transferId }`
 	} );
+};
+
+/**
+ * Submit a response to the NPS Survey.
+ * @param {string}     surveyName     The name of the NPS survey being submitted
+ * @param {int}        score          The value for the survey response
+ * @param {Function}   fn             The callback function
+ * @returns {Promise}
+ */
+Undocumented.prototype.submitNPSSurvey = function( surveyName, score, fn ) {
+	return this.wpcom.req.post( { path: `/nps/${ surveyName }` }, { apiVersion: '1.2' }, { score }, fn );
+};
+
+/**
+ * Dismiss the NPS Survey.
+ * @param {string}     surveyName     The name of the NPS survey being submitted
+ * @param {Function}   fn             The callback function
+ * @returns {Promise}
+ */
+Undocumented.prototype.dismissNPSSurvey = function( surveyName, fn ) {
+	return this.wpcom.req.post( { path: `/nps/${ surveyName }` }, { apiVersion: '1.2' }, { dismissed: true }, fn );
 };
 
 /**

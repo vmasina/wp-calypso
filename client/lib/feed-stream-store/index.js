@@ -58,6 +58,11 @@ function limitSiteParamsForLikes( params ) {
 	params.fields += ',date_liked';
 }
 
+function limitSiteParamsForTags( params ) {
+	limitSiteParams( params );
+	params.fields += ',tagged_on';
+}
+
 function trainTracksProxyForStream( stream, callback ) {
 	return function( err, response ) {
 		const eventName = 'calypso_traintracks_render';
@@ -109,24 +114,35 @@ function getStoreForTag( storeId ) {
 		id: storeId,
 		fetcher: fetcher,
 		keyMaker: mixedKeyMaker,
-		onGapFetch: limitSiteParams,
-		onUpdateFetch: limitSiteParams,
+		onGapFetch: limitSiteParamsForTags,
+		onUpdateFetch: limitSiteParamsForTags,
 		dateProperty: 'tagged_on'
 	} );
 }
 
+function validateSearchSort( sort ) {
+	if ( sort !== 'relevance' && sort !== 'date' ) {
+		return 'relevance';
+	}
+	return sort;
+}
+
 function getStoreForSearch( storeId ) {
-	const slug = storeId.substring( storeId.indexOf( ':' ) + 1 );
+	const idParts = storeId.split( ':' );
+	const sort = validateSearchSort( idParts[ 1 ] );
+	const slug = idParts.slice( 2 ).join( ':' );
 	const stream = new PagedStream( {
 		id: storeId,
 		fetcher: fetcher,
 		keyMaker: siteKeyMaker,
 		perPage: 5
 	} );
+	stream.sortOrder = sort;
 
 	function fetcher( query, callback ) {
 		query.q = slug;
 		query.meta = 'site';
+		query.sort = sort;
 		wpcomUndoc.readSearch( query, trainTracksProxyForStream( stream, callback ) );
 	}
 

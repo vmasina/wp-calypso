@@ -1,0 +1,54 @@
+.nps-survey {
+	border: 1px solid $gray-dark;
+}
+
+.nps-survey__thank-you-screen {
+	display: none;
+}
+
+.button.nps-survey__finish-button {
+	display: none;
+}
+
+.nps-survey.is-submitted {
+	.nps-survey__question-screen {
+		display: none;
+	}
+
+	.nps-survey__thank-you-screen {
+		display: block;
+	}
+}
+
+.nps-survey.is-recommendation-selected {
+	.button.nps-survey__finish-button {
+		display: inline-block;
+	}
+}
+
+.nps-survey__recommendation-select {
+	display: inline-block;
+}
+
+.nps-survey__scale-labels {
+	padding: 0 6px;
+}
+
+.nps-survey__very-likely-label {
+	float: right;
+}
+
+.nps-survey__recommendation-option {
+	display: inline-block;
+	padding: 0 6px;
+}
+
+.nps-survey__recommendation-option input[type=radio] {
+	margin: 0 2px;
+}
+
+.nps-survey__recommendation-option input[type=radio] + span {
+	clear: both;
+	margin-left: 0;
+	text-align: center;
+}

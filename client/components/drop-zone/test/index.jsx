@@ -70,13 +70,13 @@ describe( 'index', function() {
 	} );
 
 	it( 'should accept an icon to override the default icon', function() {
-		var tree = ReactDom.render( React.createElement( DropZone, {
-				icon: 'house'
-			} ), container ), icon;
+		const tree = ReactDom.render( React.createElement( DropZone, {
+			icon: <div className="customIconClassName" />
+		} ), container );
 
-		icon = TestUtils.findRenderedDOMComponentWithClass( tree, 'drop-zone__content-icon' );
+		const icon = TestUtils.findRenderedDOMComponentWithClass( tree, 'customIconClassName' );
 
-		expect( icon.className ).to.contain( 'gridicons-house' );
+		expect( TestUtils.isDOMComponent( icon ) ).to.equal( true );
 	} );
 
 	it( 'should highlight the drop zone when dragging over the body', function() {
@@ -168,7 +168,7 @@ describe( 'index', function() {
 		window.dispatchEvent( dropEvent );
 
 		expect( spyDrop.calledOnce ).to.be.ok;
-		expect( spyDrop.getCall( 0 ).args[0] ).to.eql( dropEvent );
+		expect( spyDrop.getCall( 0 ).args[ 0 ] ).to.eql( dropEvent );
 	} );
 
 	it( 'should call onFilesDrop with the files array when a drop occurs', function() {
@@ -185,7 +185,7 @@ describe( 'index', function() {
 		window.dispatchEvent( dropEvent );
 
 		expect( spyDrop.calledOnce ).to.be.ok;
-		expect( spyDrop.getCall( 0 ).args[0] ).to.eql( [ 1, 2, 3 ] );
+		expect( spyDrop.getCall( 0 ).args[ 0 ] ).to.eql( [ 1, 2, 3 ] );
 	} );
 
 	it( 'should not call onFilesDrop if onVerifyValidTransfer returns false', function() {

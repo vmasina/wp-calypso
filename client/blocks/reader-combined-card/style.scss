@@ -7,7 +7,7 @@
 }
 
 .reader-avatar.has-site-icon {
-	margin-right: 8px;
+	margin-right: 12px;
 }
 
 .reader-combined-card__header-details {
@@ -91,6 +91,7 @@
 
 .reader-combined-card__post-list {
 	margin-left: 0;
+	margin-bottom: 18px;
 }
 
 .reader-combined-card__post {
@@ -152,6 +153,10 @@
 		.reader-combined-card__post-author-and-time {
 			display: flex;
 		}
+	}
+
+	&:last-of-type {
+		margin-bottom: 18px;
 	}
 }
 
@@ -215,22 +220,23 @@
 	&:focus,
 	&:link,
 	&:visited {
-		color: $blue-wordpress;
+		color: $blue-medium;
 	}
 
 	&:hover,
 	&:active {
-		color: $blue-medium;
+		color: $blue-light;
 	}
 }
 
 // Override standard .card styles in stream
 .reader-combined-card.card {
-	border-bottom: 1px solid lighten( $gray, 30% );
+	border-bottom: 1px solid lighten( $gray, 20% );
 	box-shadow: none;
 	margin: 0 15px;
 	padding: 18px 0 0;
 	position: relative;
+	width: 100%;
 
 	@include breakpoint( ">660px" ) {
 		margin: 0;

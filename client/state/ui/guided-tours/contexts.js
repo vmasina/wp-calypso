@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { EDITOR_PASTE_EVENT } from 'state/action-types';
+import { ANALYTICS_EVENT_RECORD, EDITOR_PASTE_EVENT } from 'state/action-types';
 import { SOURCE_GOOGLE_DOCS } from 'components/tinymce/plugins/wpcom-track-paste/sources';
 import config from 'config';
 import { abtest } from 'lib/abtest';
@@ -85,16 +85,26 @@ export const hasUserRegisteredBefore = date => state => {
 	return ( registrationDate < compareDate );
 };
 
+/*
+ * Deprecated.
+ */
+export const hasUserInteractedWithComponent = () => () => false;
+
 /**
- * Returns a selector that tests whether the user has interacted with a given component.
+ * Returns a selector that tests whether a certain analytics event has been
+ * fired.
  *
- * @see client/components/track-interactions
+ * @see client/state/analytics
  *
- * @param {String} componentName Name of component to test
+ * @param {String} eventName Name of analytics event
  * @return {Function} Selector function
  */
-export const hasUserInteractedWithComponent = componentName => state =>
-	getLastAction( state ).component === componentName;
+export const hasAnalyticsEventFired = eventName => state => {
+	const last = getLastAction( state );
+	return ( last.type === ANALYTICS_EVENT_RECORD ) &&
+		last.meta.analytics.some( record =>
+			record.payload.name === eventName );
+};
 
 /**
  * Returns true if the selected site can be previewed

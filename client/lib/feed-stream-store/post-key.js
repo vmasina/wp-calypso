@@ -7,8 +7,8 @@ export function keyForPost( post ) {
 	}
 	if ( post.is_external ) {
 		return {
-			feedId: post.feed_ID,
-			postId: post.ID
+			feedId: post.feed_ID || post.site_ID,
+			postId: post.feed_item_ID || post.ID
 		};
 	}
 	return {
@@ -37,4 +37,21 @@ export function keysAreEqual( a, b ) {
 		return a.feedId === b.feedId;
 	}
 	return a.blogId === b.blogId;
+}
+
+export function keyToString( postKey ) {
+	if ( ! postKey || postKey.isGap ) {
+		return null;
+	}
+
+	const feedId = postKey.feedId ? `&feedId=${ postKey.feedId }` : '';
+	const blogId = postKey.blogId ? `&feedId=${ postKey.blogId }` : '';
+
+	if ( postKey.isCombination ) {
+		return `postId=${ postKey.postIds[ 0 ] }${ feedId }${ blogId } `;
+	} else if ( postKey.isRecommendationBlock ) {
+		return `rec-${ postKey.index }`;
+	}
+
+	return `postId=${ postKey.postId }${ feedId }${ blogId } `;
 }

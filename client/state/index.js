@@ -9,6 +9,7 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
  */
 import sitesSync from './sites/enhancer';
 import noticesMiddleware from './notices/middleware';
+import extensionsModule from 'extensions';
 import application from './application/reducer';
 import accountRecovery from './account-recovery/reducer';
 import automatedTransfer from './automated-transfer/reducer';
@@ -58,11 +59,16 @@ import themes from './themes/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
 import wordads from './wordads/reducer';
+import config from 'config';
 
 /**
  * Module variables
  */
-export const reducer = combineReducers( {
+
+// Consolidate the extension reducers under 'extensions' for namespacing.
+const extensions = combineReducers( extensionsModule.reducers() );
+
+const reducers = {
 	application,
 	accountRecovery,
 	automatedTransfer,
@@ -73,6 +79,7 @@ export const reducer = combineReducers( {
 	currentUser,
 	documentHead,
 	domains,
+	extensions,
 	geo,
 	googleAppsUsers,
 	happinessEngineers,
@@ -111,7 +118,9 @@ export const reducer = combineReducers( {
 	ui,
 	users,
 	wordads,
-} );
+};
+
+export const reducer = combineReducers( reducers );
 
 export function createReduxStore( initialState = {} ) {
 	const isBrowser = typeof window === 'object';
@@ -120,9 +129,11 @@ export function createReduxStore( initialState = {} ) {
 	const middlewares = [
 		thunkMiddleware,
 		noticesMiddleware,
+		isBrowser && require( './happychat/middleware.js' ).default(),
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
 		isBrowser && require( './data-layer/wpcom-api-middleware.js' ).default,
 		isAudioSupported && require( './audio/middleware.js' ).default,
+		isBrowser && config.isEnabled( 'automated-transfer' ) && require( './automated-transfer/middleware.js' ).default,
 	].filter( Boolean );
 
 	const enhancers = [

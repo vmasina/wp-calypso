@@ -14,11 +14,10 @@ import Gridicon from 'gridicons';
 import Main from 'components/main';
 import Button from 'components/button';
 import ThemesSelection from './themes-selection';
-import StickyPanel from 'components/sticky-panel';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { addTracking, trackClick } from './helpers';
 import DocumentHead from 'components/data/document-head';
-import { getFilter, getSortedFilterTerms, stripFilters } from './theme-filters.js';
+import { prependFilterKeys, getSortedFilterTerms, stripFilters } from './theme-filters.js';
 import buildUrl from 'lib/mixins/url-search/build-url';
 import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -85,14 +84,6 @@ const ThemeShowcase = React.createClass( {
 		};
 	},
 
-	prependFilterKeys() {
-		const { filter } = this.props;
-		if ( filter ) {
-			return filter.split( ',' ).map( getFilter ).join( ' ' ) + ' ';
-		}
-		return '';
-	},
-
 	doSearch( searchBoxContent ) {
 		const filter = getSortedFilterTerms( searchBoxContent );
 		const searchString = stripFilters( searchBoxContent );
@@ -154,13 +145,11 @@ const ThemeShowcase = React.createClass( {
 			<Main className="themes">
 				<DocumentHead title={ themesMeta[ tier ].title } meta={ metas } />
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle } />
-				<StickyPanel>
-					<ThemesSearchCard
-						onSearch={ this.doSearch }
-						search={ this.prependFilterKeys() + search }
-						tier={ tier }
-						select={ this.onTierSelect } />
-				</StickyPanel>
+				<ThemesSearchCard
+					onSearch={ this.doSearch }
+					search={ prependFilterKeys( filter ) + search }
+					tier={ tier }
+					select={ this.onTierSelect } />
 				{ this.showUploadButton() && <Button className="themes__upload-button" compact icon
 					onClick={ this.onUploadClick }
 					href={ siteSlug ? `/design/upload/${ siteSlug }` : '/design/upload' }>

@@ -2,9 +2,11 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
 import { debounce } from 'lodash';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -12,6 +14,7 @@ import classNames from 'classnames';
 import Search from 'components/search';
 import SegmentedControl from 'components/segmented-control';
 import Suggestions from 'components/suggestions';
+import StickyPanel from 'components/sticky-panel';
 import config from 'config';
 import { isMobile } from 'lib/viewport';
 import { filterIsValid, getTaxonomies, } from '../theme-filters.js';
@@ -57,18 +60,35 @@ class ThemesMagicSearchCard extends React.Component {
 	}
 
 	onKeyDown = ( event ) => {
-		this.findTextForSuggestions( event.target.value );
+		const txt = event.target.value;
+		this.findTextForSuggestions( txt );
 
+		let inputUpdated = false;
 		//We need this logic because we are working togheter with different modules.
 		//that provide suggestions to the input depending on what is currently in input
 		const target = this.state.editedSearchElement !== '' ? 'suggestions' : 'welcome';
 		if ( this.refs[ target ] ) {
-			this.refs[ target ].handleKeyEvent( event );
+			// handleKeyEvent functions return bool that infroms if suggestion was picked
+			// We need that because we cannot rely on input state because it is updated
+			// asynchronously and we are not able to observe what was changed during handleKeyEvent
+			inputUpdated = this.refs[ target ].handleKeyEvent( event );
+		}
+
+		if ( event.key === 'Enter' && ! inputUpdated && this.isPreviousCharWhitespace() ) {
+			this.refs[ 'url-search' ].blur();
+			this.setState( { searchIsOpen: false } );
 		}
 	}
 
 	onClick = ( event ) => {
 		this.findTextForSuggestions( event.target.value );
+	}
+
+	// Check if char before cursor in input is a space.
+	isPreviousCharWhitespace = () => {
+		const { value, selectionStart } = this.refs[ 'url-search' ].refs.searchInput;
+		const cursorPosition = value.slice( 0, selectionStart ).length;
+		return value[ cursorPosition - 1 ] === ' ';
 	}
 
 	findEditedTokenIndex = ( tokens, cursorPosition ) => {
@@ -140,11 +160,6 @@ class ThemesMagicSearchCard extends React.Component {
 		this.setState( { searchInput: input } );
 	}
 
-	onBlur = ( event ) => {
-		event.preventDefault();
-		this.setState( { searchIsOpen: false } );
-	}
-
 	searchTokens = ( input ) => {
 		//We are not able to scroll overlay on Edge so just create empty div
 		if ( global.window && /(Edge)/.test( global.window.navigator.userAgent ) ) {
@@ -192,6 +207,23 @@ class ThemesMagicSearchCard extends React.Component {
 		this.updateInput( updatedInput );
 	}
 
+	focusOnInput = () => {
+		this.refs[ 'url-search' ].focus();
+	}
+
+	clearSearch = () => {
+		this.updateInput( '' );
+		this.focusOnInput();
+	}
+
+	handleClickOutside() {
+		this.setState( { searchIsOpen: false } );
+	}
+
+	handleClickInside = () => {
+		this.focusOnInput();
+	}
+
 	render() {
 		const { isJetpack, translate } = this.props;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
@@ -208,6 +240,7 @@ class ThemesMagicSearchCard extends React.Component {
 		const searchField = (
 			<Search
 				onSearch={ this.props.onSearch }
+				initialValue={ this.state.searchInput }
 				value={ this.state.searchInput }
 				ref="url-search"
 				placeholder={ translate( 'What kind of theme are you looking for?' ) }
@@ -219,9 +252,8 @@ class ThemesMagicSearchCard extends React.Component {
 				onKeyDown={ this.onKeyDown }
 				onClick={ this.onClick }
 				overlayStyling={ this.searchTokens }
-				onBlur={ this.onBlur }
 				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
-				hideClose={ isMobile() }
+				hideClose={ true }
 			/>
 		);
 
@@ -238,16 +270,33 @@ class ThemesMagicSearchCard extends React.Component {
 
 		return (
 			<div className={ magicSearchClass }>
-				<div className={ themesSearchCardClass } data-tip-target="themes-search-card">
-					{ searchField }
-					{ isPremiumThemesEnabled && ! isJetpack &&
-						<SegmentedControl
-							initialSelected={ this.props.tier }
-							options={ tiers }
-							onSelect={ this.props.select }
-						/>
-					}
-				</div>
+				<StickyPanel>
+					<div
+						className={ themesSearchCardClass }
+						data-tip-target="themes-search-card"
+						onClick={ this.handleClickInside } >
+						{ searchField }
+						{ ! isMobile() && this.state.searchInput !== '' &&
+							<div className="themes-magic-search-card__icon" >
+								<Gridicon
+									icon="cross"
+									className="themes-magic-search-card__icon-close"
+									tabIndex="0"
+									onClick={ this.clearSearch }
+									aria-controls={ 'search-component-magic-search' }
+									aria-label={ translate( 'Clear Search' ) }
+								/>
+							</div>
+						}
+						{ isPremiumThemesEnabled && ! isJetpack &&
+							<SegmentedControl
+								initialSelected={ this.props.tier }
+								options={ tiers }
+								onSelect={ this.props.select }
+							/>
+						}
+					</div>
+				</StickyPanel>
 				{ renderSuggestions &&
 					<Suggestions
 						ref="suggestions"
@@ -287,4 +336,4 @@ export default connect(
 	( state ) => ( {
 		isJetpack: isJetpackSite( state, getSelectedSiteId( state ) )
 	} )
-)( localize( ThemesMagicSearchCard ) );
+)( localize( wrapWithClickOutside( ThemesMagicSearchCard ) ) );
