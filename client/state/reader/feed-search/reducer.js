@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import { createReducer, keyedReducer } from 'state/utils';
+import { uniqBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { READER_FEED_SEARCH_RECEIVE } from 'state/action-types';
+import { createReducer, keyedReducer } from 'state/utils';
 
 /**
  * Tracks mappings between queries --> feed results
@@ -23,7 +24,10 @@ import { READER_FEED_SEARCH_RECEIVE } from 'state/action-types';
  * @return {Array}        Updated state
  */
 export const items = keyedReducer( 'query', createReducer( [], {
-	[ READER_FEED_SEARCH_RECEIVE ]: ( state, action ) => state.concat( action.payload )
+	[ READER_FEED_SEARCH_RECEIVE ]: ( state, action ) => uniqBy(
+		state.concat( action.payload ),
+		'URL',
+	)
 } ) );
 
 export default items;

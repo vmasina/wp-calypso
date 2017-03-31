@@ -19,6 +19,10 @@ class QueryFeedSearch extends Component {
 		this.props.requestFeedSearch( this.props.query );
 	}
 
+	componentWillReceiveProps( nextProps ) {
+		nextProps.requestFeedSearch( nextProps.query );
+	}
+
 	render() {
 		return null;
 	}

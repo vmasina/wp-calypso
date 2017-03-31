@@ -41,10 +41,10 @@ import feedSiteFluxAdapter from 'lib/reader-site-feed-flux-adapter';
 */
 
 const ConnectedFollowListItem = localize( feedSiteFluxAdapter(
-	( { feed, site, translate, follow, feedId, siteId } ) => (
+	( { feed, site, translate, url, feedId, siteId } ) => (
 		<SubscriptionListItem
 			isFollowing={ true }
-			siteUrl={ follow.URL }
+			siteUrl={ url }
 			siteTitle={ feed && feed.name }
 			siteAuthor={ site && site.owner }
 			siteExcerpt={ feed && feed.description }
@@ -164,13 +164,21 @@ class FollowingManage extends Component {
 					</CompactCard>
 				</div>
 				{ ! query && <RecommendedPosts recommendations={ recommendations } /> }
-				{ map( followsToShow, follow =>
+				{ ! query && map( followsToShow, follow =>
 					<ConnectedFollowListItem
 						key={ `follow-${ follow.URL }` }
-						follow={ follow }
+						url={ follow.URL }
 						feedId={ follow.feed_ID }
 						siteId={ follow.blog_ID }
 					/> // todo transform from feed_ID to feedId in data-layer??
+				) }
+				{ !! query && map( searchResults, feed =>
+					<ConnectedFollowListItem
+						key={ `follow-${ feed.URL }` }
+						feedId={ feed.feed_ID }
+						siteId={ feed.blog_ID }
+						url={ feed.URL }
+					/>
 				) }
 			</ReaderMain>
 		);
