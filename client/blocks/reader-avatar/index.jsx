@@ -44,7 +44,9 @@ const ReaderAvatar = ( {
 	}
 
 	let hasSiteIcon = !! get( fakeSite, 'icon.img' );
-	let hasAvatar = !! ( author && author.avatar_URL );
+	let hasAvatar = !! ( author && author.avatar_URL &&
+		author.avatar_URL.indexOf( 'd=' ) === -1 ); // any gravatar link w/ non gravatar image
+			// should be discarded.  see: https://en.gravatar.com/site/implement/images/
 
 	if ( hasSiteIcon && hasAvatar ) {
 		// Do these both reference the same image? Disregard query string params.

@@ -3,10 +3,11 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { trim, debounce, sampleSize, map, take } from 'lodash';
+import { trim, debounce, sampleSize, map } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import qs from 'qs';
+import { List, WindowScroller } from 'react-virtualized';
 
 /**
  * Internal Dependencies
@@ -97,6 +98,7 @@ class FollowingManage extends Component {
 			if ( width > 0 ) {
 				this.searchBoxRef.style.width = `${ width }px`;
 			}
+			this.setState( { width } );
 		}
 	}
 
@@ -130,16 +132,31 @@ class FollowingManage extends Component {
 		}
 
 		return {
-			recommendations
+			recommendations,
+			width: ( this.state && this.state.width ) || 800,
 		};
 	}
+
+	followedRowRenderer = ( { index, key, style } ) => {
+		const { follows } = this.props;
+		const follow = follows[ index ];
+		return (
+			<div key={ key } style={ style }>
+				<ConnectedFollowListItem
+					feedId={ follow.feed_ID }
+					siteId={ follow.blog_ID }
+					url={ follow.URL }
+				/>
+			</div>
+		);
+	};
 
 	render() {
 		const { query, translate, follows, searchResults } = this.props;
 		const searchPlaceholderText = translate( 'Search millions of sites' );
 		const recommendations = this.state.recommendations;
 		// console.error( follows );
-		const followsToShow = take( follows, 25 );
+		// const followsToShow = take( follows, 25 );
 
 		return (
 			<ReaderMain className="following-manage">
@@ -164,21 +181,28 @@ class FollowingManage extends Component {
 					</CompactCard>
 				</div>
 				{ ! query && <RecommendedPosts recommendations={ recommendations } /> }
-				{ ! query && map( followsToShow, follow =>
-					<ConnectedFollowListItem
-						key={ `follow-${ follow.URL }` }
-						url={ follow.URL }
-						feedId={ follow.feed_ID }
-						siteId={ follow.blog_ID }
-					/> // todo transform from feed_ID to feedId in data-layer??
-				) }
+				{ ! query &&
+					<WindowScroller>
+						{ ( { height, scrollTop } ) => (
+							<List
+								autoHeight
+								height={ height }
+								rowCount={ follows.length }
+								rowHeight={ 83 }
+								rowRenderer={ this.followedRowRenderer }
+								scrollTop={ scrollTop }
+								width={ this.state.width }
+							/>
+						)}
+					</WindowScroller>
+				}
 				{ !! query && map( searchResults, feed =>
 					<ConnectedFollowListItem
-						key={ `follow-${ feed.URL }` }
+						key={ `feedresult-${ feed.URL }` }
+						url={ feed.URL }
 						feedId={ feed.feed_ID }
 						siteId={ feed.blog_ID }
-						url={ feed.URL }
-					/>
+					/> // todo transform from feed_ID to feedId in data-layer??
 				) }
 			</ReaderMain>
 		);
