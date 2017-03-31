@@ -46,6 +46,10 @@
 		z-index: z-index( 'root', '.following__intro-close-icon' );
 		fill: #fff;
 
+		// Fix for 1px (0.5pt) misalignment in Safari under retina. See
+		// https://github.com/Automattic/wp-calypso/pull/11282/#issuecomment-289837131
+		transform: scale( 1 );
+
 		&:hover {
 			cursor: pointer;
 			fill: darken( #62a9a7, 15% );
