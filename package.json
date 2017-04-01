@@ -44,7 +44,7 @@
     "cookie-parser": "1.3.2",
     "copy-webpack-plugin": "3.0.1",
     "creditcards": "2.1.2",
-    "cross-env": "4.0.0-beta.0",
+    "cross-env": "4.0.0",
     "debug": "2.2.0",
     "doctrine": "2.0.0",
     "dom-helpers": "2.4.0",
@@ -167,7 +167,10 @@
     "build-css:debug": "node-sass --include-path client --source-map \"public/style-debug.css.map\" assets/stylesheets/style.scss public/style-debug.css && npm run autoprefixer -- public/style-debug.css",
 	"build-css:editor": "node-sass --include-path client assets/stylesheets/editor.scss public/editor.css && npm run autoprefixer -- public/editor.css",
 	"build-css:directly": "node-sass --include-path client assets/stylesheets/directly.scss public/directly.css && npm run autoprefixer -- public/directly.css",
-    "autoprefixer": "postcss -r --use autoprefixer --autoprefixer.browsers \"last 2 versions, > 1%, Safari >= 8, iOS >= 8, Firefox ESR, Opera 12.1\""
+    "autoprefixer": "postcss -r --use autoprefixer --autoprefixer.browsers \"last 2 versions, > 1%, Safari >= 8, iOS >= 8, Firefox ESR, Opera 12.1\"",
+	"update-deps": "node bin/remove-deps.js && npm install --no-optional && npm install --no-optional && npm shrinkwrap --dev",
+	"preshrinkwrap": "npm prune",
+	"postshrinkwrap": "node bin/trim-shrinkwrap.js"
   },
   "devDependencies": {
     "babel-eslint": "6.1.2",
