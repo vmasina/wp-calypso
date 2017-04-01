@@ -158,8 +158,11 @@
     "lint": "bin/run-lint .",
     "css-lint": "stylelint 'client/**/*.scss' --syntax scss",
     "prestart": "check-node-version --package",
-    "start": "cross-env NODE_PATH=$NODE_PATH:server:client:. CALYPSO_ENV=development NODE_ENV=development \"npm run build && node build/bundle.js\"",
-    "build": "run-p generate-proptypes-index generate-components-usage-stats build-server generate-devdocs-index build-css",
+	"start": "cross-env NODE_PATH=$NODE_PATH:server:client:. \"npm run build && node build/bundle.js\"",
+	"build": "run-p generate-proptypes-index generate-components-usage-stats build-server generate-devdocs-index build-css",
+	"postbuild": "npm run bundle",
+	"build-desktop": "run-p build-server build-css",
+	"postbuild-desktop": "npm run bundle",
     "generate-proptypes-index": "node server/devdocs/bin/generate-proptypes-index.js client/**/index.js client/**/index.jsx client/**/example.jsx !**/test/**",
     "generate-components-usage-stats": "node server/devdocs/bin/generate-components-usage-stats.js client/**/*.js client/**/*.jsx !**/docs/** !**/test/** !**/docs-example/**",
     "build-server": "mkdirp build && webpack --display-error-details --config webpack.config.node.js",
@@ -172,7 +175,9 @@
     "autoprefixer": "postcss -r --use autoprefixer --autoprefixer.browsers \"last 2 versions, > 1%, Safari >= 8, iOS >= 8, Firefox ESR, Opera 12.1\"",
 	"update-deps": "node bin/remove-deps.js && npm install --no-optional && npm install --no-optional && npm shrinkwrap --dev",
 	"preshrinkwrap": "npm prune",
-	"postshrinkwrap": "node bin/trim-shrinkwrap.js"
+	"postshrinkwrap": "node bin/trim-shrinkwrap.js",
+	"dashboard": "webpack-dashboard -- npm start",
+	"bundle": "node server/bundler/bin/bundler.js"
   },
   "devDependencies": {
     "babel-eslint": "6.1.2",
