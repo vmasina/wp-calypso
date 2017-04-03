@@ -188,7 +188,7 @@
     "preshrinkwrap": "npm prune",
     "postshrinkwrap": "node bin/trim-shrinkwrap.js",
     "dashboard": "webpack-dashboard -- npm start",
-    "bundle": "node server/bundler/bin/bundler.js",
+    "bundle": "npm run env -- node server/bundler/bin/bundler.js",
     "precommit": "npm run install-if-needed && node bin/pre-commit-hook.js",
     "prepush": "npm run install-if-needed && node bin/pre-push-hook.js",
     "translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -e date **/*.js **/*.jsx !build/** !.git/** !node_modules/** !public/**",
