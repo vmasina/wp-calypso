@@ -1,5 +1,11 @@
 #!/usr/bin/env node
 
+/**
+ * Runs `eslint` only on the files the current branch modified.
+ * Note that this has file-level granularity, so if you modified a
+ * small bit of a big fail, you may get errors that weren't caused by you.
+ */
+
 const path = require( 'path' );
 const child_process = require( 'child_process' );
 

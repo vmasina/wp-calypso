@@ -1,4 +1,11 @@
 #!/usr/bin/env node
+
+/**
+ * Removes the redundant fields on the npm-shrinkwrap.json file.
+ * Similar to `shonkwrap`, but rewritten to be multiplatform.
+ * It's plain JS with no external dependencies.
+ */
+
 const fs = require( 'fs' );
 const shrinkwrap = require( __dirname + '/../npm-shrinkwrap.json' );
 

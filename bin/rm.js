@@ -1,4 +1,18 @@
 #!/usr/bin/env node
+
+/**
+ * Simple script to remove files. Since this will be use to clean node_modules,
+ * it can't have any dependency (except for the Node standard lib).
+ *
+ * Usage:
+ * rm.js folder
+ * Will delete "folder" and its contents, or do nothing if it doesn't exist
+ * rm.js file.ext
+ * Will delete the file, or do nothing if it doesn't exist
+ * rm.js folder .ext1 .ext2
+ * Will delete all the files inside "folder" that end in the given extensions
+ */
+
 const fs = require( 'fs' );
 
 if ( process.argv.length < 3 ) {
