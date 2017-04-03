@@ -337,7 +337,7 @@ module.exports = function() {
 		} );
 	}
 
-	app.get( '/theme', ( req, res ) => res.redirect( '/design' ) );
+	app.get( '/theme', ( req, res ) => res.redirect( '/themes' ) );
 
 	sections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
