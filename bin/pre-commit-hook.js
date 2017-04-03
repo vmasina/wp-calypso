@@ -2,7 +2,6 @@
 
 const execSync = require( 'child_process' ).execSync;
 const spawnSync = require( 'child_process' ).spawnSync;
-const readline = require( 'readline-sync' );
 const chalk = require( 'chalk' );
 
 console.log( '\nBy contributing to this project, you license the materials you contribute ' +
