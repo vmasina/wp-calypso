@@ -55,7 +55,7 @@ const user = _user();
 /**
  * Debug instance
  */
-let debug = new Debug( 'calypso:me:account' );
+const debug = new Debug( 'calypso:me:account' );
 
 const Account = React.createClass( {
 
@@ -215,13 +215,8 @@ const Account = React.createClass( {
 	},
 
 	handleRadioChange( event ) {
-		const name = event.currentTarget.name;
-		const value = event.currentTarget.value;
-		let updateObj = {};
-
-		updateObj[ name ] = value;
-
-		this.setState( updateObj );
+		const { name, value } = event.currentTarget;
+		this.setState( { [ name ]: value } );
 	},
 
 	/**
@@ -270,7 +265,7 @@ const Account = React.createClass( {
 	},
 
 	onSiteSelect( siteSlug ) {
-		let selectedSite = sites.getSite( siteSlug );
+		const selectedSite = sites.getSite( siteSlug );
 		if ( selectedSite ) {
 			this.props.userSettings.updateSetting( 'primary_site_ID', selectedSite.ID );
 		}
