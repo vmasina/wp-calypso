@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { noop, uniqueId } from 'lodash';
+import { uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -26,9 +26,9 @@ export function createNotice( status, text, options = {} ) {
 		displayOnNextPage: options.displayOnNextPage || false,
 		status: status,
 		text: text,
-		button: options.button || false,
-		href: options.href || false,
-		onClick: options.onClick || noop
+		button: options.button,
+		href: options.href,
+		onClick: options.onClick
 	};
 
 	return {
