@@ -3,6 +3,7 @@
  */
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
 
@@ -142,7 +143,7 @@ const ManagePurchase = React.createClass( {
 
 		return (
 			<div className="manage-purchase__contact-support">
-				{ this.translate( 'You are the owner of %(purchaseName)s but because you are no longer a user on %(siteSlug)s, ' +
+				{ this.props.translate( 'You are the owner of %(purchaseName)s but because you are no longer a user on %(siteSlug)s, ' +
 				'renewing it will require staff assistance. Please {{contactSupportLink}}contact support{{/contactSupportLink}}, ' +
 				'and consider transferring this purchase to another active user on %(siteSlug)s to avoid this issue in the future.',
 					{
@@ -160,7 +161,7 @@ const ManagePurchase = React.createClass( {
 
 	getExpiringText( purchase ) {
 		if ( purchase.expiryStatus === 'manualRenew' ) {
-			return this.translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
+			return this.props.translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
 				'Please, add a credit card if you want it to autorenew. ',
 				{
 					args: {
@@ -174,7 +175,7 @@ const ManagePurchase = React.createClass( {
 			const expiryMoment = this.moment( purchase.expiryMoment );
 			const daysToExpiry = this.moment( expiryMoment.diff( this.moment() ) ).format( 'D' );
 
-			return this.translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s days. ',
+			return this.props.translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s days. ',
 				{
 					args: {
 						purchaseName: getName( purchase ),
@@ -184,7 +185,7 @@ const ManagePurchase = React.createClass( {
 			);
 		}
 
-		return this.translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s.',
+		return this.props.translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s.',
 			{
 				args: {
 					purchaseName: getName( purchase ),
@@ -223,7 +224,7 @@ const ManagePurchase = React.createClass( {
 
 		return (
 			<NoticeAction onClick={ this.handleRenew }>
-				{ this.translate( 'Renew Now' ) }
+				{ this.props.translate( 'Renew Now' ) }
 			</NoticeAction>
 		);
 	},
@@ -243,8 +244,8 @@ const ManagePurchase = React.createClass( {
 					showDismiss={ false }
 					status={ showCreditCardExpiringWarning( purchase ) ? 'is-error' : 'is-info' }>
 					{
-						this.translate( 'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. ' +
-							'Please {{a}}update your payment information{{/a}}.', {
+						this.props.translate( 'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s ' +
+							'– before the next renewal. Please {{a}}update your payment information{{/a}}.', {
 								args: {
 									cardType: creditCard.type.toUpperCase(),
 									cardNumber: creditCard.number,
@@ -306,10 +307,10 @@ const ManagePurchase = React.createClass( {
 	renderPrice() {
 		const purchase = getPurchase( this.props ),
 			{ amount, currencyCode, currencySymbol, productSlug } = purchase,
-			period = productSlug && isMonthly( productSlug ) ? this.translate( 'month' ) : this.translate( 'year' );
+			period = productSlug && isMonthly( productSlug ) ? this.props.translate( 'month' ) : this.props.translate( 'year' );
 
 		if ( isOneTimePurchase( purchase ) ) {
-			return this.translate( '%(currencySymbol)s%(amount)f %(currencyCode)s {{period}}(one-time){{/period}}', {
+			return this.props.translate( '%(currencySymbol)s%(amount)f %(currencyCode)s {{period}}(one-time){{/period}}', {
 				args: { amount, currencyCode, currencySymbol },
 				components: {
 					period: <span className="manage-purchase__time-period" />
@@ -318,10 +319,10 @@ const ManagePurchase = React.createClass( {
 		}
 
 		if ( isIncludedWithPlan( purchase ) ) {
-			return this.translate( 'Free with Plan' );
+			return this.props.translate( 'Free with Plan' );
 		}
 
-		return this.translate( '%(currencySymbol)s%(amount)f %(currencyCode)s {{period}}/ %(period)s{{/period}}', {
+		return this.props.translate( '%(currencySymbol)s%(amount)f %(currencyCode)s {{period}}/ %(period)s{{/period}}', {
 			args: {
 				amount,
 				currencyCode,
@@ -344,7 +345,7 @@ const ManagePurchase = React.createClass( {
 		if ( isIncludedWithPlan( purchase ) ) {
 			return (
 				<span className="manage-purchase__content manage-purchase__detail">
-					{ this.translate( 'Included with plan' ) }
+					{ this.props.translate( 'Included with plan' ) }
 				</span>
 			);
 		}
@@ -355,7 +356,7 @@ const ManagePurchase = React.createClass( {
 			if ( isPaidWithCreditCard( purchase ) ) {
 				paymentInfo = purchase.payment.creditCard.number;
 			} else if ( isPaidWithPayPalDirect( purchase ) ) {
-				paymentInfo = this.translate( 'expiring %(cardExpiry)s', {
+				paymentInfo = this.props.translate( 'expiring %(cardExpiry)s', {
 					args: {
 						cardExpiry: purchase.payment.expiryMoment.format( 'MMMM YYYY' )
 					},
@@ -372,7 +373,7 @@ const ManagePurchase = React.createClass( {
 
 		return (
 			<span className="manage-purchase__content manage-purchase__detail">
-				{ this.translate( 'None' ) }
+				{ this.props.translate( 'None' ) }
 			</span>
 		);
 	},
@@ -384,10 +385,10 @@ const ManagePurchase = React.createClass( {
 			return null;
 		}
 
-		let paymentDetails = (
+		const paymentDetails = (
 			<span>
 				<em className="manage-purchase__content manage-purchase__detail-label">
-					{ isDataLoading( this.props ) ? null : this.translate( 'Payment method' ) }
+					{ isDataLoading( this.props ) ? null : this.props.translate( 'Payment method' ) }
 				</em>
 				{ this.renderPaymentInfo() }
 			</span>
@@ -418,7 +419,9 @@ const ManagePurchase = React.createClass( {
 		}
 
 		return (
-			<Button className="manage-purchase__renew-button" onClick={ this.handleRenew } compact>{ this.translate( 'Renew Now' ) }</Button>
+			<Button className="manage-purchase__renew-button" onClick={ this.handleRenew } compact>
+				{ this.props.translate( 'Renew Now' ) }
+			</Button>
 		);
 	},
 
@@ -437,7 +440,7 @@ const ManagePurchase = React.createClass( {
 			<Notice
 				showDismiss={ false }
 				status="is-error"
-				text={ this.translate( 'This purchase has expired and is no longer in use.' ) }>
+				text={ this.props.translate( 'This purchase has expired and is no longer in use.' ) }>
 				{ this.renderRenewNoticeAction() }
 			</Notice>
 		);
@@ -448,42 +451,42 @@ const ManagePurchase = React.createClass( {
 
 		if ( isExpiring( purchase ) || creditCardExpiresBeforeSubscription( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
-				return this.translate( 'Domain expires on' );
+				return this.props.translate( 'Domain expires on' );
 			}
 
 			if ( isSubscription( purchase ) ) {
-				return this.translate( 'Subscription expires on' );
+				return this.props.translate( 'Subscription expires on' );
 			}
 
 			if ( isOneTimePurchase( purchase ) ) {
-				return this.translate( 'Expires on' );
+				return this.props.translate( 'Expires on' );
 			}
 		}
 
 		if ( isExpired( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
-				return this.translate( 'Domain expired on' );
+				return this.props.translate( 'Domain expired on' );
 			}
 
 			if ( isSubscription( purchase ) ) {
-				return this.translate( 'Subscription expired on' );
+				return this.props.translate( 'Subscription expired on' );
 			}
 
 			if ( isOneTimePurchase( purchase ) ) {
-				return this.translate( 'Expired on' );
+				return this.props.translate( 'Expired on' );
 			}
 		}
 
 		if ( isDomainRegistration( purchase ) ) {
-			return this.translate( 'Domain auto-renews on' );
+			return this.props.translate( 'Domain auto-renews on' );
 		}
 
 		if ( isSubscription( purchase ) ) {
-			return this.translate( 'Subscription auto-renews on' );
+			return this.props.translate( 'Subscription auto-renews on' );
 		}
 
 		if ( isOneTimePurchase( purchase ) ) {
-			return this.translate( 'Auto-renews on' );
+			return this.props.translate( 'Auto-renews on' );
 		}
 
 		return null;
@@ -500,9 +503,9 @@ const ManagePurchase = React.createClass( {
 
 			return (
 				<span>
-					{ this.translate( 'Renews with Plan' ) }
+					{ this.props.translate( 'Renews with Plan' ) }
 					<a href={ attachedPlanUrl }>
-						{ this.translate( 'View Plan' ) }
+						{ this.props.translate( 'View Plan' ) }
 					</a>
 				</span>
 			);
@@ -517,7 +520,7 @@ const ManagePurchase = React.createClass( {
 		}
 
 		if ( isOneTimePurchase( purchase ) ) {
-			return this.translate( 'Never Expires' );
+			return this.props.translate( 'Never Expires' );
 		}
 	},
 
@@ -532,8 +535,8 @@ const ManagePurchase = React.createClass( {
 			const path = getEditCardDetailsPath( this.props.selectedSite, purchase );
 
 			const text = isRenewing( purchase )
-				? this.translate( 'Edit Payment Method' )
-				: this.translate( 'Add Credit Card' );
+				? this.props.translate( 'Edit Payment Method' )
+				: this.props.translate( 'Add Credit Card' );
 
 			return (
 				<CompactCard href={ path }>{ text }</CompactCard>
@@ -556,27 +559,27 @@ const ManagePurchase = React.createClass( {
 		if ( isRefundable( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
 				if ( isRenewal( purchase ) ) {
-					text = this.translate( 'Contact Support to Cancel Domain and Refund' );
+					text = this.props.translate( 'Contact Support to Cancel Domain and Refund' );
 					link = support.CALYPSO_CONTACT;
 				} else {
-					text = this.translate( 'Cancel Domain and Refund' );
+					text = this.props.translate( 'Cancel Domain and Refund' );
 				}
 			}
 
 			if ( isSubscription( purchase ) ) {
-				text = this.translate( 'Cancel Subscription and Refund' );
+				text = this.props.translate( 'Cancel Subscription and Refund' );
 			}
 
 			if ( isOneTimePurchase( purchase ) ) {
-				text = this.translate( 'Cancel and Refund' );
+				text = this.props.translate( 'Cancel and Refund' );
 			}
 		} else {
 			if ( isDomainRegistration( purchase ) ) {
-				text = this.translate( 'Cancel Domain' );
+				text = this.props.translate( 'Cancel Domain' );
 			}
 
 			if ( isSubscription( purchase ) ) {
-				text = this.translate( 'Cancel Subscription' );
+				text = this.props.translate( 'Cancel Subscription' );
 			}
 		}
 
@@ -597,7 +600,7 @@ const ManagePurchase = React.createClass( {
 
 		return (
 			<CompactCard href={ paths.cancelPrivacyProtection( this.props.selectedSite.slug, id ) }>
-				{ this.translate( 'Cancel Privacy Protection' ) }
+				{ this.props.translate( 'Cancel Privacy Protection' ) }
 			</CompactCard>
 		);
 	},
@@ -665,7 +668,7 @@ const ManagePurchase = React.createClass( {
 					<ul className="manage-purchase__meta">
 						<li>
 							<em className="manage-purchase__content manage-purchase__detail-label">
-								{ isDataLoading( this.props ) ? null : this.translate( 'Price' ) }
+								{ isDataLoading( this.props ) ? null : this.props.translate( 'Price' ) }
 							</em>
 							<span className="manage-purchase__content manage-purchase__detail">{ price }</span>
 						</li>
@@ -731,4 +734,4 @@ export default connect(
 		selectedPurchase: getByPurchaseId( state, props.purchaseId ),
 		selectedSite: getSelectedSiteSelector( state )
 	} )
-)( ManagePurchase );
+)( localize( ManagePurchase ) );
