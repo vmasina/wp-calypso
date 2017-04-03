@@ -1,7 +1,7 @@
 /**
  * Module dependencies
  */
-var fs = require( 'fs' ),
+const fs = require( 'fs' ),
 	path = require( 'path' ),
 	spawn = require( 'child_process' ).spawn,
 	debug = require( 'debug' )( 'calypso:bundler:css-hot-reload' ),
