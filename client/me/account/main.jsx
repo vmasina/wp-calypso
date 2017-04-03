@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import i18n, { localize } from 'i18n-calypso';
 import Debug from 'debug';
 import emailValidator from 'email-validator';
@@ -64,7 +63,6 @@ const Account = React.createClass( {
 
 	mixins: [
 		formBase,
-		LinkedStateMixin,
 		observe( 'userSettings', 'username' ),
 		eventRecorder
 	],
@@ -84,21 +82,50 @@ const Account = React.createClass( {
 		debug( this.constructor.displayName + ' component is unmounting.' );
 	},
 
-	updateLanguage() {
-		let valueLink = this.valueLink( 'language' );
+	getUserSetting( settingName ) {
+		return this.props.userSettings.getSetting( settingName );
+	},
 
-		valueLink.requestChange = ( value ) => {
-			const originalLanguage = this.props.userSettings.getOriginalSetting( 'language' );
+	updateUserSetting( settingName ) {
+		return event => this.props.userSettings.updateSetting( settingName, event.target.value );
+	},
 
-			this.props.userSettings.updateSetting( 'language', value );
-			if ( value !== originalLanguage ) {
-				this.setState( { redirect: '/me/account' } );
-			} else {
-				this.setState( { redirect: false } );
-			}
-		};
+	updateUserSettingCheckbox( settingName ) {
+		return event => this.props.userSettings.updateSetting( settingName, event.target.checked );
+	},
 
-		return valueLink;
+	updateLanguage( event ) {
+		const { value } = event.target;
+		const originalLanguage = this.props.userSettings.getOriginalSetting( 'language' );
+
+		this.props.userSettings.updateSetting( 'language', value );
+		if ( value !== originalLanguage ) {
+			this.setState( { redirect: '/me/account' } );
+		} else {
+			this.setState( { redirect: false } );
+		}
+	},
+
+	getEmailAddress() {
+		return this.hasPendingEmailChange()
+			? this.props.userSettings.getSetting( 'new_user_email' )
+			: this.props.userSettings.getSetting( 'user_email' );
+	},
+
+	updateEmailAddress( event ) {
+		const { value } = event.target;
+		if ( '' === value ) {
+			this.setState( { emailValidationError: 'empty' } );
+		} else if ( ! emailValidator.validate( value ) ) {
+			this.setState( { emailValidationError: 'invalid' } );
+		} else {
+			this.setState( { emailValidationError: false } );
+		}
+		this.props.userSettings.updateSetting( 'user_email', value );
+	},
+
+	updateUserLoginConfirm( event ) {
+		this.setState( { userLoginConfirm: event.target.value } );
 	},
 
 	validateUsername() {
@@ -121,7 +148,8 @@ const Account = React.createClass( {
 					<FormLegend>{ translate( 'Community Translator' ) }</FormLegend>
 					<FormLabel>
 						<FormCheckbox
-							checkedLink={ this.valueLink( 'enable_translator' ) }
+							checked={ this.getUserSetting( 'enable_translator' ) }
+							onChange={ this.updateUserSettingCheckbox( 'enable_translator' ) }
 							disabled={ this.getDisabledState() }
 							id="enable_translator"
 							name="enable_translator"
@@ -272,7 +300,8 @@ const Account = React.createClass( {
 				<FormLegend>{ translate( 'Holiday Snow' ) }</FormLegend>
 				<FormLabel>
 					<FormCheckbox
-						checkedLink={ this.valueLink( 'holidaysnow' ) }
+						checked={ this.getUserSetting( 'holidaysnow' ) }
+						onChange={ this.updateUserSettingCheckbox( 'holidaysnow' ) }
 						disabled={ this.getDisabledState() }
 						id="holidaysnow"
 						name="holidaysnow"
@@ -409,24 +438,6 @@ const Account = React.createClass( {
 		);
 	},
 
-	updateEmailAddress() {
-		return {
-			value: this.hasPendingEmailChange()
-				? this.props.userSettings.getSetting( 'new_user_email' )
-				: this.props.userSettings.getSetting( 'user_email' ),
-			requestChange: ( value ) => {
-				if ( '' === value ) {
-					this.setState( { emailValidationError: 'empty' } );
-				} else if ( ! emailValidator.validate( value ) ) {
-					this.setState( { emailValidationError: 'invalid' } );
-				} else {
-					this.setState( { emailValidationError: false } );
-				}
-				this.props.userSettings.updateSetting( 'user_email', value );
-			}
-		};
-	},
-
 	renderEmailValidation() {
 		const { translate, userSettings } = this.props;
 
@@ -470,7 +481,8 @@ const Account = React.createClass( {
 						name="email"
 						isError={ !! this.state.emailValidationError }
 						onFocus={ this.recordFocusEvent( 'Email Address Field' ) }
-						valueLink={ this.updateEmailAddress() }
+						value={ this.getEmailAddress() }
+						onChange={ this.updateEmailAddress }
 						valueKey="user_email"
 					/>
 					{ this.renderEmailValidation() }
@@ -492,7 +504,8 @@ const Account = React.createClass( {
 						id="url"
 						name="url"
 						onFocus={ this.recordFocusEvent( 'Web Address Field' ) }
-						valueLink={ this.valueLink( 'user_URL' ) }
+						value={ this.getUserSetting( 'user_URL' ) }
+						onChange={ this.updateUserSetting( 'user_URL' ) }
 					/>
 					<FormSettingExplanation>
 						{ translate( 'Shown publicly when you comment on blogs.' ) }
@@ -508,7 +521,8 @@ const Account = React.createClass( {
 						name="lang_id"
 						onFocus={ this.recordFocusEvent( 'Interface Language Field' ) }
 						valueKey="langSlug"
-						valueLink={ this.updateLanguage() }
+						value={ this.getUserSetting( 'language' ) }
+						onChange={ this.updateLanguage }
 					/>
 					{ this.thankTranslationContributors() }
 				</FormFieldset>
@@ -580,7 +594,9 @@ const Account = React.createClass( {
 						id="username_confirm"
 						name="username_confirm"
 						onFocus={ this.recordFocusEvent( 'Username Confirm Field' ) }
-						valueLink={ this.linkState( 'userLoginConfirm' ) } />
+						value={ this.state.userLoginConfirm }
+						onChange={ this.updateUserLoginConfirm }
+					/>
 					{ this.renderUsernameConfirmNotice() }
 					<FormSettingExplanation>{ translate( 'Confirm new username' ) }</FormSettingExplanation>
 				</FormFieldset>
